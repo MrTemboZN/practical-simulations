@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>UV‑Vis Spectrum Simulator — Conjugation, Transitions, Chromophores & Bands (Mulungushi University‑SNAS by Mr Tembo ZN)</title>
+<meta name="description" content="Interactive UV‑Vis spectroscopy simulator to explore effects of conjugation, n→π* vs π→π* transitions, chromophores vs auxochromes, and K/B/E/R bands. Projector‑friendly, offline HTML." />
+<style>
+  :root{
+    --bg:#edf3fb;
+    --panel:#ffffff;
+    --panel-soft:#f5f8fd;
+    --ink:#10213d;
+    --muted:#4b5f7b;
+    --accent:#1255c7;
+    --accent-hover:#0d439e;
+    --accent2:#159447;
+    --warn:#9a5b0b;
+    --border:#c9d7eb;
+    --border-strong:#a9bedc;
+    --grid:#e5eaf5;
+    --chip:#eaf1ff;
+    --shadow:0 16px 40px rgba(20, 53, 96, .11);
+    --header-height:78px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;overflow:hidden}
+  body{
+    margin:0;
+    min-height:100dvh;
+    display:flex;
+    flex-direction:column;
+    background:
+      radial-gradient(circle at 15% 0%, rgba(46, 111, 224, .12), transparent 28rem),
+      var(--bg);
+    color:var(--ink);
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+    font-size:15px;
+  }
+  header{
+    flex:0 0 auto;
+    min-height:var(--header-height);
+    padding:13px clamp(16px, 2vw, 30px);
+    color:#fff;
+    border-bottom:1px solid rgba(255,255,255,.16);
+    background:linear-gradient(115deg,#0c2857 0%, #104dad 56%, #0d6a89 100%);
+    box-shadow:0 6px 22px rgba(11, 40, 87, .18);
+    position:relative;
+    z-index:2;
+  }
+  .header-inner{display:flex;align-items:center;justify-content:space-between;gap:20px;max-width:1920px;margin:0 auto}
+  .eyebrow{margin:0 0 3px;font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:#bcd6ff}
+  header h1{margin:0;font-size:clamp(18px,1.55vw,26px);font-weight:800;line-height:1.2;letter-spacing:-.015em}
+  header .sub{font-size:12px;color:#dbeafe;margin-top:5px}
+  .live-badge{flex:0 0 auto;display:inline-flex;align-items:center;gap:8px;padding:8px 11px;border:1px solid rgba(255,255,255,.3);border-radius:999px;background:rgba(255,255,255,.12);font-size:12px;font-weight:800;white-space:nowrap}
+  .live-badge::before{content:"";width:8px;height:8px;border-radius:50%;background:#5ee58a;box-shadow:0 0 0 4px rgba(94,229,138,.15)}
+  .app{
+    flex:1 1 auto;
+    min-height:0;
+    width:100%;
+    max-width:1920px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:minmax(350px,29vw) minmax(0,1fr);
+    gap:14px;
+    padding:14px clamp(12px,1.4vw,24px) 16px;
+  }
+  .card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:20px;
+    box-shadow:var(--shadow);
+    min-width:0;
+  }
+  .controls{
+    min-height:0;
+    padding:18px;
+    overflow-y:auto;
+    overscroll-behavior:contain;
+    scrollbar-gutter:stable;
+  }
+  .controls h2{margin:1px 0 9px;font-size:15px;color:#143d78;letter-spacing:.01em}
+  .controls h2:not(:first-child){margin-top:16px}
+  .controls .group{padding:12px;margin-bottom:0;border:1px solid #d8e3f2;border-radius:14px;background:var(--panel-soft)}
+  .row{display:flex;align-items:center;gap:10px;margin:9px 0}
+  .row:first-child{margin-top:0}
+  .row:last-child{margin-bottom:0}
+  .row>label{min-width:132px;font-size:12px;font-weight:700;color:var(--muted);line-height:1.35}
+  .row input[type="range"]{width:100%;min-width:70px;accent-color:var(--accent)}
+  .row input[type="number"]{width:72px;min-height:38px;padding:7px 8px;border:1px solid var(--border-strong);border-radius:10px;background:#fff;color:var(--ink);font:inherit;font-weight:700}
+  .row .pill{display:inline-flex;gap:8px;flex-wrap:wrap}
+  .pill label{display:inline-flex;align-items:center;gap:7px;min-width:0;padding:7px 10px;border:1px solid var(--border);border-radius:999px;background:#fff;font-size:12px;font-weight:650;color:#304865;cursor:pointer;transition:border-color .18s ease,background .18s ease,transform .18s ease}
+  .pill label:hover{border-color:#7fa4db;background:#eef5ff;transform:translateY(-1px)}
+  .pill input{width:16px;height:16px;margin:0;accent-color:var(--accent)}
+  .btns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:17px}
+  button{
+    appearance:none;min-height:42px;border:1px solid var(--border-strong);background:#fff;border-radius:12px;padding:9px 11px;color:#17365f;font:inherit;font-size:12px;font-weight:800;cursor:pointer;box-shadow:0 2px 7px rgba(28,67,121,.05);transition:transform .16s ease,box-shadow .16s ease,background .16s ease,border-color .16s ease;
+  }
+  button:hover{transform:translateY(-1px);border-color:#7d9fce;box-shadow:0 6px 15px rgba(28,67,121,.12)}
+  button:active{transform:translateY(0)}
+  button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid rgba(37,99,235,.3);outline-offset:2px}
+  button.primary{grid-column:1/-1;background:linear-gradient(135deg,#1764d8,#0d48aa);border-color:var(--accent);color:#fff;box-shadow:0 8px 18px rgba(18,85,199,.24)}
+  button.primary:hover{background:linear-gradient(135deg,#0f55bd,#0b3f94)}
+  button.ghost{background:#fff}
+  .viz{min-height:0;padding:10px 10px 14px;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable;position:relative}
+  .viz-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 5px 10px}
+  .legend{display:flex;gap:7px;flex-wrap:wrap}
+  .chip{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:999px;background:var(--chip);border:1px solid #c9d9f2;font-size:11px;font-weight:800;color:#294a75}
+  .chip i{display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--accent)}
+  .chip .k{background:#2563eb}   /* blue */
+  .chip .b{background:#fb923c}   /* orange */
+  .chip .e{background:#8b5cf6}   /* purple */
+  .chip .r{background:#16a34a}   /* green */
+  .chip .ct{background:#6b7280}  /* gray */
+  .plot-tools{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 3px 9px;padding:8px 10px;border:1px solid #d7e2f1;border-radius:12px;background:#f7faff}
+  .zoom-controls{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .zoom-btn{min-height:34px;padding:6px 10px;border-radius:9px;font-size:12px;box-shadow:none}
+  .zoom-btn:disabled{cursor:not-allowed;opacity:.45;transform:none;box-shadow:none}
+  .zoom-level{display:inline-flex;align-items:center;justify-content:center;min-width:128px;min-height:34px;padding:6px 10px;border:1px solid #c7d7ee;border-radius:9px;background:#fff;color:#173f76;font-size:12px;font-weight:850;font-variant-numeric:tabular-nums}
+  .zoom-hint{font-size:11px;color:var(--muted);text-align:right;line-height:1.35}
+  .comparison-panel{margin:0 3px 9px;padding:10px;border:1px solid #cbdcf1;border-radius:12px;background:linear-gradient(135deg,#f8fbff,#eef5ff)}
+  .comparison-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+  .comparison-title{font-size:13px;font-weight:850;color:#173f76}
+  .comparison-note{display:block;margin-top:2px;font-size:10px;font-weight:500;color:var(--muted)}
+  .comparison-actions{display:flex;gap:7px;flex-wrap:wrap}
+  .comparison-btn{min-height:34px;padding:6px 10px;border-radius:9px;font-size:11px;box-shadow:none}
+  .comparison-btn.primary-compare{background:#173f76;border-color:#173f76;color:#fff}
+  .comparison-options{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .comparison-option{display:inline-flex;align-items:center;gap:7px;min-height:34px;padding:6px 10px;border:1px solid #c7d7ee;border-radius:999px;background:#fff;color:#294a75;font-size:11px;font-weight:800;cursor:pointer}
+  .comparison-option input{width:15px;height:15px;margin:0;accent-color:var(--series-color)}
+  .series-dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--series-color);box-shadow:0 0 0 3px color-mix(in srgb,var(--series-color) 16%,transparent)}
+  .comparison-status{margin-left:auto;font-size:10px;color:var(--muted);font-weight:700}
+  .comparison-legend{display:flex;gap:7px;flex-wrap:wrap;margin:0 3px 9px;padding:8px 10px;border:1px solid #d7e2f1;border-radius:11px;background:#fff}
+  .comparison-legend[hidden]{display:none}
+  .series-key{display:inline-flex;align-items:center;gap:7px;padding:5px 8px;border-radius:999px;background:#f7faff;border:1px solid #d6e2f2;color:#294a75;font-size:11px;font-weight:800}
+  canvas{display:block;width:100%;height:clamp(310px,46vh,500px);background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.7)}
+  .readout{padding:10px 2px 4px;font-size:13px;line-height:1.45}
+  .readout .grid{display:grid;grid-template-columns: repeat(2, minmax(0,1fr)); gap:8px}
+  .readout .kpi{padding:10px 12px;border:1px solid #d7e2f1;border-radius:12px;background:linear-gradient(180deg,#fff,#f8fbff)}
+  .readout .kpi h3{margin:0 0 4px 0;font-size:12px;color:#365a89}
+  .readout .kpi .v{font-weight:700}
+  .mini{font-size:12px;color:var(--muted)}
+  .defn{padding:8px 2px 0;font-size:13px;line-height:1.55}
+  .defn details{margin:8px 0;background:#f8fbff;border:1px solid #d6e1f1;border-radius:12px;padding:9px 11px}
+  .defn summary{cursor:pointer;font-weight:800;color:#214a80}
+  .defn ul{padding-left:22px}
+  .controls::-webkit-scrollbar,.viz::-webkit-scrollbar{width:10px}
+  .controls::-webkit-scrollbar-thumb,.viz::-webkit-scrollbar-thumb{background:#b5c7df;border:3px solid transparent;border-radius:999px;background-clip:padding-box}
+  .controls::-webkit-scrollbar-track,.viz::-webkit-scrollbar-track{background:transparent}
+
+  @media (max-width:1100px){
+    .app{grid-template-columns:minmax(330px,35vw) minmax(0,1fr)}
+    .row{align-items:flex-start;flex-wrap:wrap}
+    .row>label{width:100%;min-width:0}
+    .row input[type="range"]{flex:1}
+    .viz-top{align-items:flex-start;flex-direction:column}
+    .plot-tools{align-items:flex-start;flex-direction:column}
+    .zoom-hint{text-align:left}
+    .comparison-head{align-items:flex-start;flex-direction:column}
+    .comparison-status{width:100%;margin-left:0}
+    canvas{height:clamp(300px,44vh,450px)}
+  }
+
+  @media (max-width:820px){
+    html,body{height:auto;overflow:auto}
+    body{display:block;min-height:100dvh}
+    header{min-height:auto;padding:15px 16px}
+    .header-inner{align-items:flex-start}
+    .live-badge{display:none}
+    header h1{font-size:clamp(19px,5vw,25px)}
+    header .sub{font-size:12px;line-height:1.45}
+    .app{display:block;padding:10px}
+    .controls,.viz{min-height:0;overflow:visible;scrollbar-gutter:auto}
+    .controls{padding:15px}
+    .viz{margin-top:11px;padding:10px}
+    .row{align-items:stretch;flex-direction:column;gap:8px}
+    .row input[type="number"]{width:100%;max-width:none}
+    .row .pill{width:100%}
+    .pill label{flex:1 1 180px;min-height:40px}
+    canvas{height:clamp(280px,58vw,360px)}
+  }
+
+  @media (max-width:560px){
+    .eyebrow{font-size:10px}
+    .card{border-radius:16px}
+    .controls{padding:13px}
+    .controls .group{padding:11px}
+    .pill{display:grid!important;grid-template-columns:1fr}
+    .pill label{width:100%;flex:auto}
+    .btns{grid-template-columns:1fr}
+    button.primary{grid-column:auto}
+    .plot-tools{padding:8px}
+    .zoom-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%}
+    .zoom-btn{padding:6px 8px}
+    .zoom-level{grid-column:1/-1;width:100%}
+    .comparison-actions{display:grid;grid-template-columns:1fr;width:100%}
+    .comparison-btn{width:100%}
+    .comparison-options{display:grid;grid-template-columns:1fr;width:100%}
+    .comparison-option{width:100%}
+    .legend{gap:5px}
+    .chip{font-size:10px}
+    canvas{height:290px;border-radius:11px}
+    .readout .grid{grid-template-columns:1fr}
+    .viz-top>.mini{line-height:1.4}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{scroll-behavior:auto!important;transition:none!important}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <div>
+      <div class="eyebrow">Interactive spectroscopy laboratory</div>
+      <h1>UV‑Vis Spectrum Simulator — Conjugation • Transitions • Chromophores • K/B/E/R Bands</h1>
+      <div class="sub">Mulungushi University‑SNAS — created by Mr Tembo ZN • Projector‑friendly • Runs offline in Chrome</div>
+    </div>
+    <div class="live-badge">Live simulation</div>
+  </div>
+</header>
+
+<div class="app">
+  <div class="card controls">
+    <h2>1) Molecular System</h2>
+    <div class="group">
+      <div class="row">
+        <label>System (chromophore)</label>
+        <div class="pill">
+          <label><input type="radio" name="system" value="aromatic" checked> Aromatic (benzene‑like)</label>
+          <label><input type="radio" name="system" value="carbonyl"> Carbonyl (enone)</label>
+          <label><input type="radio" name="system" value="polyene"> Polyene (conjugated)</label>
+        </div>
+      </div>
+      <div class="row">
+        <label>Conjugation units (n)</label>
+        <input id="nUnits" type="range" min="1" max="8" step="1" value="1" oninput="syncNum('nUnits','nUnitsNum')">
+        <input id="nUnitsNum" type="number" min="1" max="8" step="1" value="1" oninput="syncRange('nUnitsNum','nUnits')">
+      </div>
+    </div>
+
+    <h2>2) Transitions</h2>
+    <div class="group">
+      <div class="row">
+        <label>Show transitions</label>
+        <div class="pill">
+          <label><input id="showPi" type="checkbox" checked> π→π* (K/E/B)</label>
+          <label><input id="showN" type="checkbox" > n→π* (R)</label>
+        </div>
+      </div>
+      <div class="row">
+        <label>Bandpass FWHM (nm)</label>
+        <input id="fwhm" type="range" min="10" max="90" step="2" value="40" oninput="syncNum('fwhm','fwhmNum')">
+        <input id="fwhmNum" type="number" min="10" max="90" step="1" value="40" oninput="syncRange('fwhmNum','fwhm')">
+      </div>
+    </div>
+
+    <h2>3) Auxochromes</h2>
+    <div class="group">
+      <div class="row">
+        <label>Choose groups</label>
+        <div class="pill">
+          <label><input class="aux" value="OH" type="checkbox"> –OH</label>
+          <label><input class="aux" value="OR" type="checkbox"> –OR</label>
+          <label><input class="aux" value="NH2" type="checkbox"> –NH₂</label>
+          <label><input class="aux" value="NR2" type="checkbox"> –NR₂</label>
+          <label><input class="aux" value="X" type="checkbox"> –X (halogen)</label>
+        </div>
+      </div>
+      <div class="row">
+        <label>Substituent count</label>
+        <input id="nSubs" type="range" min="0" max="4" step="1" value="1" oninput="syncNum('nSubs','nSubsNum')">
+        <input id="nSubsNum" type="number" min="0" max="4" step="1" value="1" oninput="syncRange('nSubsNum','nSubs')">
+      </div>
+      <div class="mini">Auxochromes typically cause bathochromic (λ<sub>max</sub> ↑) and hyperchromic (ε ↑) effects.</div>
+    </div>
+
+    <h2>4) Additional chromophores</h2>
+    <div class="group">
+      <div class="row">
+        <label>Add‑ons</label>
+        <div class="pill">
+          <label><input id="addNO2" type="checkbox"> –NO₂ (nitro; CT band)</label>
+          <label><input id="addAZO" type="checkbox"> –N=N– (azo; CT band)</label>
+        </div>
+      </div>
+      <div class="mini">These can introduce charge‑transfer (CT) bands in the near‑UV/visible.</div>
+    </div>
+
+    <div class="btns">
+      <button class="primary" onclick="simulate()">Update spectrum</button>
+      <button class="ghost" onclick="resetAll()">Reset</button>
+      <button class="ghost" onclick="preset('benzene')">Preset: Benzene</button>
+      <button class="ghost" onclick="preset('aniline')">Preset: Aniline</button>
+      <button class="ghost" onclick="preset('butadiene')">Preset: 1,3‑Butadiene</button>
+      <button class="ghost" onclick="preset('enone')">Preset: Enone</button>
+    </div>
+  </div>
+
+  <div class="card viz">
+    <div class="viz-top">
+      <div class="legend">
+        <span class="chip"><i class="k"></i> K (π→π*)</span>
+        <span class="chip"><i class="b"></i> B (aromatic)</span>
+        <span class="chip"><i class="e"></i> E (aromatic)</span>
+        <span class="chip"><i class="r"></i> R (n→π*)</span>
+        <span class="chip"><i class="ct"></i> CT (charge‑transfer)</span>
+      </div>
+      <div class="mini">Axes: Absorbance (A) vs Wavelength λ (nm)</div>
+    </div>
+    <div class="plot-tools" aria-label="Spectrum zoom controls">
+      <div class="zoom-controls">
+        <button class="zoom-btn" id="zoomOut" type="button" onclick="zoomSpectrum(-1)" aria-label="Zoom out spectrum">− Zoom out</button>
+        <button class="zoom-btn" id="zoomIn" type="button" onclick="zoomSpectrum(1)" aria-label="Zoom in spectrum">+ Zoom in</button>
+        <button class="zoom-btn" id="zoomReset" type="button" onclick="resetZoom()">Reset zoom</button>
+        <output class="zoom-level" id="zoomLevel" aria-live="polite">150% zoom</output>
+      </div>
+      <div class="zoom-hint">Zoom changes the wavelength window while keeping absorbance values unchanged.</div>
+    </div>
+    <div class="comparison-panel" aria-label="System overlay controls">
+      <div class="comparison-head">
+        <div class="comparison-title">Spectrum overlay comparison
+          <span class="comparison-note">Keep the previous spectrum to reveal shifts, or compare molecular systems under the same settings.</span>
+        </div>
+        <div class="comparison-actions">
+          <button class="comparison-btn primary-compare" type="button" onclick="overlayAllSystems()">Overlay all systems</button>
+          <button class="comparison-btn" type="button" onclick="clearAllOverlays()">Single spectrum</button>
+        </div>
+      </div>
+      <div class="comparison-options">
+        <label class="comparison-option" style="--series-color:#64748b"><input id="keepPrevious" type="checkbox" onchange="togglePreviousOverlay()"><span class="series-dot"></span>Keep previous spectrum</label>
+        <label class="comparison-option" style="--series-color:#2563eb"><input class="compare-system" type="checkbox" value="aromatic" onchange="simulate()"><span class="series-dot"></span>Aromatic</label>
+        <label class="comparison-option" style="--series-color:#dc2626"><input class="compare-system" type="checkbox" value="carbonyl" onchange="simulate()"><span class="series-dot"></span>Carbonyl</label>
+        <label class="comparison-option" style="--series-color:#059669"><input class="compare-system" type="checkbox" value="polyene" onchange="simulate()"><span class="series-dot"></span>Polyene</label>
+        <output class="comparison-status" id="comparisonStatus" aria-live="polite">Single-system view</output>
+      </div>
+    </div>
+    <div class="comparison-legend" id="comparisonLegend" hidden></div>
+    <canvas id="plot" width="1200" height="420" aria-label="UV-Vis spectrum canvas" aria-describedby="zoomLevel"></canvas>
+    <div class="readout" id="readout"></div>
+    <div class="defn">
+      <details open>
+        <summary>Concept map</summary>
+        <ul>
+          <li><b>Conjugation</b>: Extending π‑conjugation usually red‑shifts (bathochromic) λ<sub>max</sub> and increases intensity (hyperchromic).</li>
+          <li><b>Transitions</b>:
+            <ul>
+              <li><b>π→π*</b>: Allowed, generally strong (K/E/B bands).</li>
+              <li><b>n→π*</b>: Forbidden/weak, small ε (R band), often at longer λ in carbonyls.</li>
+            </ul>
+          </li>
+          <li><b>Chromophores</b>: Light‑absorbing units (e.g., C=C, C=O, aromatic ring, –NO₂, –N=N–).</li>
+          <li><b>Auxochromes</b>: Groups like –OH/–OR/–NH₂/–NR₂/–X that modify λ<sub>max</sub> and ε via resonance/inductive effects.</li>
+          <li><b>K/B/E/R bands</b>:
+            <ul>
+              <li><b>K</b>: π→π* in conjugated systems (incl. polyenes & enones).</li>
+              <li><b>B</b> & <b>E</b>: Aromatic (benzenoid) bands; E typically higher energy (shorter λ) and stronger than B.</li>
+              <li><b>R</b>: n→π* in carbonyl‑type systems; weak intensity.</li>
+            </ul>
+          </li>
+        </ul>
+      </details>
+      <details>
+        <summary>Tips</summary>
+        <ul>
+          <li>Enable <b>Keep previous spectrum</b>, change a setting such as conjugation, then select <b>Update spectrum</b>. The earlier curve remains dashed so the shift is easy to see.</li>
+          <li>Use <b>Conjugation units (n)</b> to explore bathochromic & hyperchromic trends.</li>
+          <li>Toggle <b>auxochromes</b> to see shifts/intensity changes.</li>
+          <li>For carbonyls, enable <b>n→π*</b> to reveal the <b>R band</b>.</li>
+          <li>Try presets to see classic spectra (benzene, aniline, butadiene, enone).</li>
+        </ul>
+      </details>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---------- helpers: sync inputs ----------
+function syncNum(rangeId, numId){
+  const r = document.getElementById(rangeId);
+  const n = document.getElementById(numId);
+  n.value = r.value;
+}
+function syncRange(numId, rangeId){
+  const n = document.getElementById(numId);
+  const r = document.getElementById(rangeId);
+  r.value = n.value;
+}
+
+// ---------- model parameters (pedagogical; simplified) ----------
+const auxEffects = {
+  // per substituent; applied * count
+  "OH":  {shift: 10, epsMult: 1.15},
+  "OR":  {shift: 12, epsMult: 1.20},
+  "NH2": {shift: 25, epsMult: 1.40},
+  "NR2": {shift: 30, epsMult: 1.50},
+  "X":   {shift: 5,  epsMult: 0.92}, // mild hypochromic tendency
+};
+
+// base intensities (relative; mapped to absorbance scaling)
+const EPS_SCALE = 60000; // ~max ε maps near A~1
+const clamp = (a,b,c)=>Math.max(b,Math.min(c,a));
+
+function getSettings(){
+  const system = [...document.querySelectorAll('input[name="system"]')].find(x=>x.checked).value;
+  const nUnits = +document.getElementById('nUnits').value;
+  const showPi = document.getElementById('showPi').checked;
+  const showN  = document.getElementById('showN').checked;
+  const fwhm   = +document.getElementById('fwhm').value;
+  const nSubs  = +document.getElementById('nSubs').value;
+  const aux = [...document.querySelectorAll('.aux')].filter(x=>x.checked).map(x=>x.value);
+  const addNO2 = document.getElementById('addNO2').checked;
+  const addAZO = document.getElementById('addAZO').checked;
+  return {system, nUnits, showPi, showN, fwhm, nSubs, aux, addNO2, addAZO};
+}
+
+function computePeaks(cfg){
+  const {system, nUnits, showPi, showN, fwhm, nSubs, aux, addNO2, addAZO} = cfg;
+
+  // aggregate auxochrome effects
+  let shiftTotal = 0;
+  let epsMultTotal = 1;
+  aux.forEach(a=>{
+    shiftTotal += (auxEffects[a]?.shift||0) * nSubs;
+    epsMultTotal *= (auxEffects[a]?.epsMult||1);
+  });
+
+  const peaks = []; // {lambda, eps, label, colorClass, widthFactor}
+
+  if(system === 'polyene'){
+    if(showPi){
+      // K band (π→π*) grows and red-shifts with conjugation (n>=1 as effective units)
+      const n = Math.max(1, nUnits);
+      const lambda = 170 + 30*(n-1) + shiftTotal;
+      const eps = (8000 + 6000*(n-1)) * epsMultTotal;
+      peaks.push({lambda, eps, label:'K (π→π*)', cls:'k', width: 1.0});
+    }
+    // n->pi* not shown for simple polyenes
+  }
+  else if(system === 'carbonyl'){
+    if(showPi){
+      // K band (π→π*) of enones; modest red-shift with conjugation
+      const lambda = 190 + 20*(nUnits-1) + shiftTotal;
+      const eps = (12000 + 2000*(nUnits-1)) * epsMultTotal;
+      peaks.push({lambda, eps, label:'K (π→π*)', cls:'k', width: 1.0});
+    }
+    if(showN){
+      // R band (n→π*) weak; longer wavelength, small intensity
+      const lambda = 290 + 15*(nUnits-1) + Math.round(0.5*shiftTotal);
+      const eps = (180 + 40*(nUnits-1)) * Math.max(0.85, epsMultTotal*0.95); // keep weak
+      peaks.push({lambda, eps, label:'R (n→π*)', cls:'r', width: 1.3});
+    }
+  }
+  else if(system === 'aromatic'){
+    if(showPi){
+      // E (strong, shorter λ) and B (moderate, longer λ) bands
+      const lambdaE = 205 + 5*(nUnits-1) + shiftTotal;
+      const epsE = 50000 * epsMultTotal;
+      peaks.push({lambda:lambdaE, eps:epsE, label:'E (aromatic)', cls:'e', width: 0.8});
+
+      const lambdaB = 255 + 7*(nUnits-1) + shiftTotal;
+      const epsB = (12000 + 1000*(nUnits-1)) * epsMultTotal;
+      peaks.push({lambda:lambdaB, eps:epsB, label:'B (aromatic)', cls:'b', width: 1.0});
+    }
+    // n->pi* typically not shown for bare aromatics; leave R off unless carbonyl present
+  }
+
+  // charge-transfer add-ons (simplified illustrative)
+  if(addNO2){
+    const lambdaCT = (system==='aromatic' ? 350 : 330) + 6*(nUnits-1) + Math.round(0.8*shiftTotal);
+    const epsCT = 3000 * epsMultTotal;
+    peaks.push({lambda:lambdaCT, eps:epsCT, label:'CT (–NO₂)', cls:'ct', width: 1.2});
+  }
+  if(addAZO){
+    const lambdaCT = (system==='aromatic' ? 420 : 390) + 8*(nUnits-1) + Math.round(0.8*shiftTotal);
+    const epsCT = 6000 * epsMultTotal;
+    peaks.push({lambda:lambdaCT, eps:epsCT, label:'CT (–N=N–)', cls:'ct', width: 1.1});
+  }
+
+  // attach gaussian widths from base fwhm
+  peaks.forEach(p=> p.fwhm = clamp(fwhm * (p.width||1), 10, 120));
+
+  // Limit λ inside plotting range
+  return peaks.filter(p=> p.lambda>=180 && p.lambda<=700);
+}
+
+// ---------- plotting ----------
+const WMIN = 180, WMAX = 700;
+const ZOOM_FACTORS = [1, 1.5, 2, 3];
+const SERIES_STYLES = {
+  aromatic:{label:'Aromatic',color:'#2563eb'},
+  carbonyl:{label:'Carbonyl',color:'#dc2626'},
+  polyene:{label:'Polyene',color:'#059669'}
+};
+let zoomIndex = 1;
+let currentSnapshot = null;
+let previousSnapshot = null;
+
+function getSelectedComparisonSystems(){
+  return [...document.querySelectorAll('.compare-system:checked')].map(x=>x.value);
+}
+
+function overlayAllSystems(){
+  document.querySelectorAll('.compare-system').forEach(x=>x.checked=true);
+  // A conjugated polyene first enters the plotted range at n=2.
+  if(+document.getElementById('nUnits').value<2){
+    document.getElementById('nUnits').value = 2;
+    document.getElementById('nUnitsNum').value = 2;
+  }
+  const nBox = document.getElementById('showN');
+  nBox.disabled = false;
+  nBox.checked = true;
+  simulate();
+}
+
+function clearSystemOverlay(){
+  document.querySelectorAll('.compare-system').forEach(x=>x.checked=false);
+  simulate();
+}
+
+function togglePreviousOverlay(){
+  if(!document.getElementById('keepPrevious').checked){
+    previousSnapshot = null;
+  }
+  // Enabling the option arms the next settings change; it must not duplicate the current curve immediately.
+  simulate({capture:false});
+}
+
+function clearAllOverlays(){
+  document.querySelectorAll('.compare-system').forEach(x=>x.checked=false);
+  document.getElementById('keepPrevious').checked = false;
+  previousSnapshot = null;
+  simulate();
+}
+
+function buildSpectrumSeries(cfg,selectedSystems){
+  if(selectedSystems.length===0){
+    return [{
+      system:cfg.system,
+      label:SERIES_STYLES[cfg.system].label,
+      color:'#0b53d6',
+      cfg,
+      peaks:computePeaks(cfg)
+    }];
+  }
+
+  return selectedSystems.map(system=>{
+    const seriesCfg = {...cfg,system,showN:system==='carbonyl' ? cfg.showN : false};
+    return {
+      system,
+      label:SERIES_STYLES[system].label,
+      color:SERIES_STYLES[system].color,
+      cfg:seriesCfg,
+      peaks:computePeaks(seriesCfg)
+    };
+  });
+}
+
+function cloneSeries(series){
+  return JSON.parse(JSON.stringify(series));
+}
+
+function describeSettings(cfg){
+  const auxText = cfg.aux.length ? `, ${cfg.aux.join('+')} × ${cfg.nSubs}` : '';
+  return `n=${cfg.nUnits}${auxText}`;
+}
+
+function styleDisplayedSeries(currentSeries,currentDescription){
+  const keepPrevious = document.getElementById('keepPrevious').checked;
+  const displayed = [];
+  if(keepPrevious && previousSnapshot){
+    previousSnapshot.series.forEach(s=>displayed.push({
+      ...s,
+      label:`Previous — ${s.label} (${previousSnapshot.description})`,
+      isPrevious:true
+    }));
+  }
+  currentSeries.forEach(s=>displayed.push({
+    ...s,
+    label:keepPrevious && previousSnapshot ? `Current — ${s.label} (${currentDescription})` : s.label,
+    isPrevious:false
+  }));
+  return displayed;
+}
+
+function gaussian(x, mu, fwhm, amp){
+  const sigma = fwhm / (2*Math.sqrt(2*Math.log(2))); // FWHM -> σ
+  const a = (x-mu)/sigma;
+  return amp * Math.exp(-0.5*a*a);
+}
+
+function getWavelengthView(peaks){
+  const factor = ZOOM_FACTORS[zoomIndex];
+  const fullSpan = WMAX - WMIN;
+  if(factor === 1 || peaks.length === 0){
+    return {min:WMIN, max:WMAX, factor};
+  }
+
+  const peakMin = Math.min(...peaks.map(p=>p.lambda));
+  const peakMax = Math.max(...peaks.map(p=>p.lambda));
+  const peakSpan = peakMax - peakMin;
+  const padding = Math.max(36, peakSpan * 0.18);
+  const span = Math.min(fullSpan, Math.max(fullSpan / factor, peakSpan + 2*padding));
+  const center = (peakMin + peakMax) / 2;
+  let min = center - span/2;
+  let max = center + span/2;
+
+  if(min < WMIN){ max += WMIN-min; min = WMIN; }
+  if(max > WMAX){ min -= max-WMAX; max = WMAX; }
+  return {min:Math.max(WMIN,min), max:Math.min(WMAX,max), factor};
+}
+
+function prepareCanvas(canvas){
+  const rect = canvas.getBoundingClientRect();
+  const w = Math.max(320, Math.round(rect.width));
+  const h = Math.max(280, Math.round(rect.height));
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const pixelWidth = Math.round(w*dpr);
+  const pixelHeight = Math.round(h*dpr);
+  if(canvas.width !== pixelWidth || canvas.height !== pixelHeight){
+    canvas.width = pixelWidth;
+    canvas.height = pixelHeight;
+  }
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx,w,h};
+}
+
+function zoomSpectrum(direction){
+  zoomIndex = clamp(zoomIndex + direction, 0, ZOOM_FACTORS.length-1);
+  simulate({capture:false});
+}
+
+function resetZoom(){
+  zoomIndex = 0;
+  simulate({capture:false});
+}
+
+function updateZoomControls(view){
+  const zoomOut = document.getElementById('zoomOut');
+  const zoomIn = document.getElementById('zoomIn');
+  zoomOut.disabled = zoomIndex === 0;
+  zoomIn.disabled = zoomIndex === ZOOM_FACTORS.length-1;
+  document.getElementById('zoomLevel').textContent = `${Math.round(view.factor*100)}% zoom • ${Math.round(view.min)}–${Math.round(view.max)} nm`;
+}
+
+function updateComparisonUI(series,isComparison,hasPrevious,systemComparisonCount){
+  const status = document.getElementById('comparisonStatus');
+  const legend = document.getElementById('comparisonLegend');
+  const canvas = document.getElementById('plot');
+  if(!isComparison){
+    status.textContent = 'Single-system view';
+    legend.hidden = true;
+    legend.innerHTML = '';
+    canvas.setAttribute('aria-label',`${series[0].label} UV-Vis spectrum`);
+    return;
+  }
+
+  if(hasPrevious && systemComparisonCount){
+    status.textContent = `Previous state retained • ${systemComparisonCount} system${systemComparisonCount===1?'':'s'}`;
+  } else if(hasPrevious){
+    status.textContent = 'Previous spectrum retained for shift comparison';
+  } else {
+    status.textContent = `Overlaying ${series.length} system${series.length===1?'':'s'}`;
+  }
+  legend.hidden = false;
+  legend.innerHTML = series.map(s=>{
+    const peaks = s.peaks.map(p=>`${p.label} ${Math.round(p.lambda)} nm`).join(' • ') || 'No bands in range';
+    return `<span class="series-key"><span class="series-dot" style="--series-color:${s.color}"></span>${s.label}: ${peaks}</span>`;
+  }).join('');
+  canvas.setAttribute('aria-label',`Overlaid UV-Vis spectra for ${series.map(s=>s.label).join(', ')}`);
+}
+
+function drawSpectrum(series,isComparison){
+  const canvas = document.getElementById('plot');
+  const {ctx,w,h} = prepareCanvas(canvas);
+  const allPeaks = series.flatMap(s=>s.peaks);
+  const view = getWavelengthView(allPeaks);
+  const viewSpan = view.max-view.min;
+  // margins
+  const m = {l:66, r:18, t:18, b:46};
+  const iw = w - m.l - m.r;
+  const ih = h - m.t - m.b;
+
+  // scales
+  const x2px = lam => m.l + (lam - view.min) / viewSpan * iw;
+  // Construct each spectrum independently so curves overlay without being summed.
+  const N = 1000;
+  const xs = new Array(N);
+  for(let i=0;i<N;i++){
+    xs[i] = view.min + i*viewSpan/(N-1);
+  }
+  const sampledSeries = series.map(s=>{
+    const ys = xs.map(lam=>s.peaks.reduce((sum,p)=>sum+gaussian(lam,p.lambda,p.fwhm,p.eps/EPS_SCALE),0));
+    return {...s,ys};
+  });
+  const highestPoint = sampledSeries.reduce((highest,s)=>Math.max(highest,...s.ys),0);
+  const ymax = Math.max(1.2, highestPoint*1.25);
+  const y2px = A => m.t + ih - (A / ymax) * ih;
+
+  // grid
+  ctx.strokeStyle = '#e5eaf5';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  const xTickStep = viewSpan <= 190 ? 20 : viewSpan <= 300 ? 25 : 50;
+  const firstXTick = Math.ceil(view.min/xTickStep)*xTickStep;
+  for(let g=firstXTick; g<=view.max; g+=xTickStep){
+    const gx = x2px(g);
+    ctx.moveTo(gx, m.t); ctx.lineTo(gx, m.t+ih);
+  }
+  for(let gy=0; gy<=ymax; gy+=0.2){
+    const gyy = y2px(gy);
+    ctx.moveTo(m.l, gyy); ctx.lineTo(m.l+iw, gyy);
+  }
+  ctx.stroke();
+
+  // axes
+  ctx.strokeStyle = '#cdd7ee'; ctx.lineWidth = 1.5;
+  // x axis
+  ctx.beginPath(); ctx.moveTo(m.l, m.t+ih); ctx.lineTo(m.l+iw, m.t+ih); ctx.stroke();
+  // y axis
+  ctx.beginPath(); ctx.moveTo(m.l, m.t); ctx.lineTo(m.l, m.t+ih); ctx.stroke();
+
+  // ticks & labels
+  ctx.fillStyle = '#0b1220'; ctx.font = '13px Inter, system-ui, sans-serif'; ctx.textAlign='center';
+  for(let g=firstXTick; g<=view.max; g+=xTickStep){
+    const gx = x2px(g);
+    ctx.beginPath(); ctx.moveTo(gx, m.t+ih); ctx.lineTo(gx, m.t+ih+6); ctx.strokeStyle='#9fb0d4'; ctx.stroke();
+    ctx.fillText(g.toString(), gx, m.t+ih+20);
+  }
+  ctx.save();
+  ctx.textAlign='right';
+  for(let gy=0; gy<=ymax; gy+=0.2){
+    const gyY = y2px(gy);
+    ctx.beginPath(); ctx.moveTo(m.l-6, gyY); ctx.lineTo(m.l, gyY); ctx.strokeStyle='#9fb0d4'; ctx.stroke();
+    ctx.fillText(gy.toFixed(1), m.l-8, gyY+4);
+  }
+  ctx.restore();
+  // axis titles
+  ctx.font = 'bold 14px Inter, system-ui, sans-serif';
+  ctx.fillText('Wavelength λ (nm)', m.l + iw/2, m.t+ih+38);
+  // y-axis rotated
+  ctx.save();
+  ctx.translate(16, m.t+ih/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText('Absorbance (A)', 0, 0);
+  ctx.restore();
+
+  // spectrum curves
+  sampledSeries.forEach(s=>{
+    ctx.strokeStyle = s.color;
+    ctx.lineWidth = s.isPrevious ? 2.1 : (isComparison ? 2.8 : 2.6);
+    ctx.globalAlpha = s.isPrevious ? 0.68 : 1;
+    ctx.setLineDash(s.isPrevious ? [9,6] : []);
+    ctx.beginPath();
+    for(let i=0;i<N;i++){
+      const x = x2px(xs[i]);
+      const y = y2px(s.ys[i]);
+      if(i===0) ctx.moveTo(x,y);
+      else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 1;
+  });
+
+  // Keep detailed peak annotations in single-system view; comparison details sit in the legend and readout.
+  if(!isComparison) series[0].peaks.filter(p=>p.lambda>=view.min && p.lambda<=view.max).forEach((p,index)=>{
+    const x = x2px(p.lambda);
+    // color per class
+    const color = (p.cls==='k')?'#2563eb' : (p.cls==='b')?'#fb923c' : (p.cls==='e')?'#8b5cf6' : (p.cls==='r')?'#16a34a' : '#6b7280';
+    ctx.strokeStyle = color; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(x, m.t+ih); ctx.lineTo(x, m.t); ctx.setLineDash([4,4]); ctx.stroke(); ctx.setLineDash([]);
+    // label box
+    const lbl = `${p.label}  λmax≈${Math.round(p.lambda)} nm`;
+    ctx.font='600 13px Inter, system-ui, sans-serif';
+    const boxWidth = ctx.measureText(lbl).width + 14;
+    const tx = clamp(x, m.l+boxWidth/2+3, m.l+iw-boxWidth/2-3);
+    const ty = m.t + 17 + (index%3)*24;
+    ctx.fillStyle='rgba(255,255,255,.94)';
+    ctx.fillRect(tx-boxWidth/2,ty-14,boxWidth,19);
+    ctx.strokeStyle='rgba(159,176,212,.8)'; ctx.lineWidth=1;
+    ctx.strokeRect(tx-boxWidth/2,ty-14,boxWidth,19);
+    ctx.fillStyle='#10213d';
+    ctx.fillText(lbl, tx, ty);
+  });
+
+  return {ymax,view};
+}
+
+function updateReadout(series,isComparison){
+  const rd = document.getElementById('readout');
+  if(series.every(s=>s.peaks.length===0)){
+    rd.innerHTML = '<div class="kpi"><h3>Readout</h3><div class="v">No bands in range. Adjust settings.</div></div>';
+    return;
+  }
+  const list = series.flatMap(s=>{
+    if(s.peaks.length===0 && isComparison){
+      return [`<div class="kpi" style="border-left:4px solid ${s.color}">
+        <h3>${s.label}</h3>
+        <div class="v">No bands in the current wavelength range.</div>
+        <div class="mini">Increase conjugation or adjust the selected settings.</div>
+      </div>`];
+    }
+    return s.peaks.map(p=>{
+    const title = isComparison ? `${s.label} • ${p.label}` : p.label;
+    return `<div class="kpi" style="border-left:4px solid ${s.color}">
+      <h3>${title}</h3>
+      <div class="v">λ<sub>max</sub> ≈ ${Math.round(p.lambda)} nm &nbsp; • &nbsp; FWHM ≈ ${Math.round(p.fwhm)} nm</div>
+      <div class="mini">relative ε ≈ ${(p.eps/1000).toFixed(1)}×10³</div>
+    </div>`;
+    });
+  }).join('');
+  rd.innerHTML = `<div class="grid">${list}</div>`;
+}
+
+// ---------- presets, reset, simulate ----------
+function preset(name){
+  if(name==='benzene'){
+    document.querySelector('input[value="aromatic"]').checked = true;
+    document.getElementById('nUnits').value = 1; document.getElementById('nUnitsNum').value = 1;
+    document.getElementById('showPi').checked = true;
+    document.getElementById('showN').checked = false;
+    document.getElementById('fwhm').value = 34; document.getElementById('fwhmNum').value = 34;
+    document.querySelectorAll('.aux').forEach(x=>x.checked=false);
+    document.getElementById('nSubs').value = 0; document.getElementById('nSubsNum').value = 0;
+    document.getElementById('addNO2').checked = false;
+    document.getElementById('addAZO').checked = false;
+  }
+  if(name==='aniline'){
+    document.querySelector('input[value="aromatic"]').checked = true;
+    document.getElementById('nUnits').value = 1; document.getElementById('nUnitsNum').value = 1;
+    document.getElementById('showPi').checked = true;
+    document.getElementById('showN').checked = false;
+    document.getElementById('fwhm').value = 36; document.getElementById('fwhmNum').value = 36;
+    document.querySelectorAll('.aux').forEach(x=>x.checked=false);
+    document.querySelector('.aux[value="NH2"]').checked = true;
+    document.getElementById('nSubs').value = 1; document.getElementById('nSubsNum').value = 1;
+    document.getElementById('addNO2').checked = false;
+    document.getElementById('addAZO').checked = false;
+  }
+  if(name==='butadiene'){
+    document.querySelector('input[value="polyene"]').checked = true;
+    document.getElementById('nUnits').value = 2; document.getElementById('nUnitsNum').value = 2;
+    document.getElementById('showPi').checked = true;
+    document.getElementById('showN').checked = false;
+    document.getElementById('fwhm').value = 42; document.getElementById('fwhmNum').value = 42;
+    document.querySelectorAll('.aux').forEach(x=>x.checked=false);
+    document.getElementById('nSubs').value = 0; document.getElementById('nSubsNum').value = 0;
+    document.getElementById('addNO2').checked = false;
+    document.getElementById('addAZO').checked = false;
+  }
+  if(name==='enone'){
+    document.querySelector('input[value="carbonyl"]').checked = true;
+    document.getElementById('nUnits').value = 1; document.getElementById('nUnitsNum').value = 1;
+    document.getElementById('showPi').checked = true;
+    document.getElementById('showN').checked = true;
+    document.getElementById('fwhm').value = 44; document.getElementById('fwhmNum').value = 44;
+    document.querySelectorAll('.aux').forEach(x=>x.checked=false);
+    document.getElementById('nSubs').value = 0; document.getElementById('nSubsNum').value = 0;
+    document.getElementById('addNO2').checked = false;
+    document.getElementById('addAZO').checked = false;
+  }
+  simulate();
+}
+
+function resetAll(){
+  zoomIndex = 1;
+  currentSnapshot = null;
+  previousSnapshot = null;
+  document.getElementById('keepPrevious').checked = false;
+  document.querySelectorAll('.compare-system').forEach(x=>x.checked=false);
+  document.querySelector('input[value="aromatic"]').checked = true;
+  document.getElementById('nUnits').value = 1; document.getElementById('nUnitsNum').value = 1;
+  document.getElementById('showPi').checked = true;
+  document.getElementById('showN').checked = false;
+  document.getElementById('fwhm').value = 40; document.getElementById('fwhmNum').value = 40;
+  document.querySelectorAll('.aux').forEach(x=>x.checked=false);
+  document.getElementById('nSubs').value = 1; document.getElementById('nSubsNum').value = 1;
+  document.getElementById('addNO2').checked = false;
+  document.getElementById('addAZO').checked = false;
+  simulate();
+}
+
+function simulate(options={}){
+  const capture = options.capture !== false;
+  const cfg = getSettings();
+  const selectedSystems = getSelectedComparisonSystems();
+  const isComparison = selectedSystems.length>0;
+  // n→π* is available whenever the active or compared set contains a carbonyl system.
+  const nBox = document.getElementById('showN');
+  if(cfg.system==='carbonyl' || selectedSystems.includes('carbonyl')){ nBox.disabled = false; }
+  else { nBox.disabled = true; nBox.checked = false; cfg.showN = false; }
+  cfg.showN = nBox.checked;
+
+  const currentSeries = buildSpectrumSeries(cfg,selectedSystems);
+  const signature = JSON.stringify({cfg,selectedSystems});
+  const description = describeSettings(cfg);
+  const keepPrevious = document.getElementById('keepPrevious').checked;
+
+  if(!currentSnapshot){
+    currentSnapshot = {signature,description,series:cloneSeries(currentSeries)};
+  } else if(capture && signature !== currentSnapshot.signature){
+    previousSnapshot = keepPrevious ? currentSnapshot : null;
+    currentSnapshot = {signature,description,series:cloneSeries(currentSeries)};
+  } else if(!keepPrevious){
+    previousSnapshot = null;
+    currentSnapshot = {signature,description,series:cloneSeries(currentSeries)};
+  }
+
+  const series = styleDisplayedSeries(currentSeries,description);
+  const hasPrevious = keepPrevious && !!previousSnapshot;
+  const displayIsComparison = isComparison || hasPrevious;
+  const {view} = drawSpectrum(series,displayIsComparison);
+  updateReadout(series,displayIsComparison);
+  updateComparisonUI(series,displayIsComparison,hasPrevious,selectedSystems.length);
+  updateZoomControls(view);
+}
+
+// initial draw
+window.addEventListener('load', simulate);
+let resizeTimer;
+window.addEventListener('resize', ()=>{
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(()=>simulate({capture:false}),120);
+});
+</script>
+</body>
+</html>
