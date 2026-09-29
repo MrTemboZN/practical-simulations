@@ -1,0 +1,1714 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Introductory Chemistry Learning Studio — Mulungushi University SNAS</title>
+<style>
+  :root{
+    /* Projector-friendly light theme */
+    --bg:#ffffff;
+    --panel:#f7f9fc;
+    --panel2:#eef3fb;
+    --grid:#cfd7ea;
+    --ink:#0b1220;
+    --muted:#334155;
+    --accent:#0b53d6;
+    --ok:#0e7c47;
+    --warn:#b7791f;
+    --bad:#b91c1c;
+    --chip:#0b53d610; /* faint accent */
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    line-height:1.35;
+  }
+  header{
+    padding:16px 20px;
+    border-bottom:1px solid var(--grid);
+    background:linear-gradient(180deg,#ffffff,#f9fbff);
+    position:sticky;top:0;z-index:10;
+  }
+  header h1{
+    margin:0;
+    font-size:clamp(18px,2.4vw,24px);
+    letter-spacing:.2px;font-weight:900;
+  }
+  header .sub{
+    color:var(--muted);
+    font-size:clamp(12px,1.6vw,14px);
+    margin-top:4px
+  }
+  .brand{
+    display:flex;align-items:center;gap:10px;margin-top:8px;color:var(--muted);
+    font-weight:700;font-size:13px;
+  }
+  .brand .chip{padding:2px 10px;border-radius:999px;border:1px solid var(--grid);background:var(--chip)}
+  .container{
+    display:grid;grid-template-columns:1.2fr 1fr;gap:16px;padding:16px;max-width:1280px;margin:0 auto;
+  }
+  @media (max-width: 1080px){ .container{ grid-template-columns:1fr; } }
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--grid);
+    border-radius:14px;overflow:hidden;
+    box-shadow:0 1px 0 rgba(12,18,32,.02), 0 12px 28px rgba(12,18,32,.06);
+  }
+  .panel h2{
+    font-size:15px;margin:0;padding:12px 14px;
+    background:var(--panel2);
+    border-bottom:1px solid var(--grid);
+    color:#0b318c; letter-spacing:.2px; font-weight:800;
+  }
+  .panel .content{padding:14px}
+  label.small{font-size:14px;color:var(--muted);font-weight:600}
+  input[type=text], input[type=number], textarea, select{
+    width:100%;
+    background:#ffffff;
+    color:var(--ink);
+    border:2px solid var(--grid);
+    border-radius:12px;
+    padding:10px 12px;
+    font-size:15px;
+    outline:none;
+  }
+  input[type=text]:focus, input[type=number]:focus, select:focus{border-color:var(--accent);box-shadow:0 0 0 3px #0b53d622;}
+  button{
+    background:var(--accent);
+    border:none;
+    color:#ffffff;
+    font-weight:800;
+    padding:10px 14px;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:14px;
+  }
+  button.ghost{
+    background:transparent;
+    border:2px solid var(--grid);
+    color:var(--ink);
+  }
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .small{font-size:13px;color:var(--muted)}
+  .badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;border:2px solid var(--grid);font-size:13px;color:var(--ink);background:#ffffff}
+  .result{
+    background:#ffffff;border:2px solid var(--grid);border-radius:12px;padding:12px;font-size:16px;font-weight:800
+  }
+  .ok{color:var(--ok)} .warn{color:var(--warn)} .bad{color:var(--bad)}
+  code{background:#ffffff;border:1px solid var(--grid);padding:2px 6px;border-radius:6px}
+  table{width:100%;border-collapse:collapse}
+  th,td{border:1px solid var(--grid);padding:8px 10px;font-size:14px}
+  th{background:#ffffff;color:var(--ink);text-align:left;font-weight:800}
+  .examples button{margin:4px 4px 0 0}
+  footer{
+    max-width:1280px;margin:20px auto;padding:0 16px;color:var(--muted);font-size:12px
+  }
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width: 720px){ .grid2{grid-template-columns:1fr} }
+  .inline{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .dim{color:var(--muted)}
+  .pill{display:inline-block;padding:2px 10px;border-radius:999px;border:1px solid var(--grid);background:#fff}
+  .help{font-size:12px;color:var(--muted);margin-top:6px}
+
+  /* 2026 learning-studio redesign */
+  :root{
+    --navy:#081b35;
+    --navy-2:#102a4d;
+    --blue:#1257c8;
+    --blue-soft:#eaf2ff;
+    --cyan:#18a6b8;
+    --paper:#f5f7fb;
+    --surface:#ffffff;
+    --line:#dce3ee;
+    --ink:#142033;
+    --muted:#59677b;
+    --accent:#1257c8;
+    --ok:#087443;
+    --warn:#9a5b05;
+    --bad:#b42318;
+  }
+  html{scroll-behavior:smooth}
+  body{min-height:100%;background:var(--paper);font-size:16px;line-height:1.55;overflow-x:hidden}
+  button,input,select,textarea{font:inherit}
+  button{min-height:44px;transition:transform .16s ease,box-shadow .16s ease,background .16s ease}
+  button:hover{box-shadow:0 8px 18px rgba(18,87,200,.16);transform:translateY(-1px)}
+  button:active{transform:translateY(0)}
+  button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid rgba(24,166,184,.32);outline-offset:2px}
+  header.topbar{
+    position:relative;top:auto;z-index:1;padding:22px clamp(18px,4vw,56px);border:0;
+    color:#fff;background:
+      radial-gradient(circle at 82% 18%,rgba(44,205,209,.28),transparent 24%),
+      linear-gradient(122deg,var(--navy) 0%,#0b3266 58%,#1257c8 100%);
+    overflow:hidden;
+  }
+  .topbar-inner{max-width:1440px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:24px}
+  .identity{display:flex;align-items:center;gap:16px;min-width:0}
+  .mark{width:54px;height:54px;flex:0 0 54px;border-radius:16px;display:grid;place-items:center;background:#fff;color:var(--navy);font-family:Georgia,"Times New Roman",serif;font-weight:800;font-size:22px;box-shadow:0 10px 28px rgba(0,0,0,.2)}
+  header.topbar h1{font-size:clamp(24px,3vw,36px);line-height:1.1;color:#fff;letter-spacing:-.025em}
+  header.topbar .sub{color:#dbeafe;font-size:clamp(13px,1.5vw,16px);margin-top:6px}
+  .top-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+  .top-badge{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.32);background:rgba(255,255,255,.1);color:#fff;border-radius:999px;padding:8px 12px;font-size:13px;font-weight:750;backdrop-filter:blur(6px)}
+  .dot{width:8px;height:8px;border-radius:50%;background:#54e6b3;box-shadow:0 0 0 4px rgba(84,230,179,.14)}
+  .course-strip{background:#fff;border-bottom:1px solid var(--line)}
+  .course-strip-inner{max-width:1440px;margin:auto;padding:12px clamp(18px,4vw,56px);display:flex;gap:14px;align-items:center;justify-content:space-between}
+  .course-meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:14px}
+  .course-meta strong{color:var(--ink)}
+  .course-tag{border-radius:999px;background:var(--blue-soft);color:#0b4eb7;padding:5px 10px;font-weight:800;font-size:12px;letter-spacing:.02em}
+  .app-shell{max-width:1440px;margin:0 auto;display:grid;grid-template-columns:260px minmax(0,1fr);gap:22px;padding:24px clamp(18px,4vw,56px) 42px}
+  .sidebar{position:sticky;top:20px;align-self:start;background:var(--navy);border-radius:22px;padding:18px;color:#fff;box-shadow:0 16px 38px rgba(8,27,53,.18)}
+  .sidebar-label{margin:2px 8px 12px;font-size:11px;text-transform:uppercase;letter-spacing:.16em;color:#a9bdd8;font-weight:800}
+  .module-nav{display:grid;gap:7px}
+  .nav-btn{width:100%;display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:center;text-align:left;border:0;background:transparent;color:#d8e5f5;padding:10px;border-radius:13px;font-weight:700;box-shadow:none}
+  .nav-btn:hover{background:rgba(255,255,255,.08);box-shadow:none;transform:none}
+  .nav-btn.active{background:#fff;color:var(--navy);box-shadow:0 9px 22px rgba(0,0,0,.18)}
+  .nav-num{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,.1);font-size:12px}
+  .nav-btn.active .nav-num{background:var(--blue-soft);color:var(--blue)}
+  .sidebar-note{border-top:1px solid rgba(255,255,255,.12);margin-top:18px;padding:16px 8px 2px;color:#b9c8dc;font-size:12px;line-height:1.6}
+  .workspace{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);gap:18px;min-width:0;padding:0;margin:0;max-width:none}
+  .mobile-tabs{display:none}
+  .panel{border:1px solid var(--line);border-radius:20px;background:var(--surface);box-shadow:0 10px 30px rgba(31,48,77,.08);overflow:hidden}
+  .panel h2{padding:18px 20px;background:#fff;border-bottom:1px solid var(--line);font-size:18px;color:var(--navy);display:flex;align-items:center;gap:10px}
+  .panel h2::before{content:"";display:block;width:5px;height:23px;border-radius:99px;background:linear-gradient(var(--cyan),var(--blue))}
+  .panel .content{padding:20px}
+  .panel[data-module]{display:none}
+  .panel[data-module].active-module{display:block}
+  .module-wide{grid-column:1/-1}
+  .section-kicker{margin:0 0 6px;color:var(--blue);font-weight:800;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+  .lead{font-size:15px;color:var(--muted);margin:0 0 16px;max-width:76ch}
+  .grid2{gap:14px}
+  label.small,.small{font-size:14px}
+  label.small{display:block;margin-bottom:6px;color:#354259;font-weight:750}
+  input[type=text],input[type=number],textarea,select{min-height:46px;border:1px solid #cbd5e1;border-radius:12px;padding:10px 12px;background:#fff;font-size:16px}
+  textarea{resize:vertical;min-height:110px}
+  .row>input,.row>select{flex:1 1 150px}
+  button{background:var(--blue);border-radius:11px;padding:10px 15px;font-size:14px}
+  button.ghost{border:1px solid #cbd5e1;background:#fff;color:#24334b}
+  .badge{border:1px solid #cbd5e1;border-radius:10px;background:#f8fafc;padding:9px 11px}
+  .result{font-family:"Cambria Math",Cambria,Georgia,serif;background:linear-gradient(135deg,#f7fbff,#eef6ff);border:1px solid #bfd4f5;border-left:5px solid var(--blue);border-radius:14px;padding:18px;font-size:clamp(19px,2.2vw,26px);line-height:1.7;letter-spacing:.01em;overflow-wrap:anywhere}
+  .chem,.equation,.math-display{font-family:"Cambria Math",Cambria,"Times New Roman",serif;font-size:1.06em;white-space:nowrap}
+  .equation{display:block;background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:18px;overflow-x:auto}
+  .chem sub,.equation sub,.result sub{font-size:.7em;vertical-align:-.28em;line-height:0}
+  .chem sup,.equation sup,.result sup{font-size:.68em;vertical-align:.58em;line-height:0}
+  .coefficient{font-weight:800;color:#0c4fb4;margin-right:.16em}
+  .examples{display:grid;gap:8px}
+  .examples .row{align-items:stretch}
+  .examples button{font-family:"Cambria Math",Cambria,serif;text-align:left;line-height:1.5;background:#fff}
+  .table-wrap,#elemTableWrap,#stoichOut,#concOutA,#concOutB{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table{min-width:560px;background:#fff}
+  th,td{border:0;border-bottom:1px solid var(--line);padding:11px 12px;font-size:14px;vertical-align:top}
+  th{background:#f5f8fc;color:#30405a;white-space:nowrap}
+  tr:last-child td{border-bottom:0}
+  .pill{border:1px solid var(--line);background:#f8fafc;padding:5px 10px}
+  .help{font-size:13px;line-height:1.55}
+  .info-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+  .info-card{border:1px solid var(--line);border-radius:15px;padding:15px;background:#fbfcfe}
+  .info-card h3{margin:0 0 8px;font-size:15px;color:var(--navy)}
+  .info-card p,.info-card li{font-size:14px;color:var(--muted)}
+  .info-card ul{margin:8px 0 0;padding-left:19px}
+  .formula-box{background:#f4f8ff;border:1px solid #cfe0fa;border-radius:14px;padding:14px;margin-top:10px;color:#15365f}
+  .formula-box .math-display{display:block;text-align:center;font-size:20px;margin:5px 0}
+  .measurement-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .tool-card{border:1px solid var(--line);border-radius:17px;padding:18px;background:#fff}
+  .tool-card h3{margin:0 0 5px;color:var(--navy);font-size:17px}
+  .tool-card p{margin:0 0 14px;color:var(--muted);font-size:14px}
+  .output-box{margin-top:12px;border-radius:12px;background:#f0f7ff;border:1px solid #cfe0fa;padding:13px;min-height:50px;color:#173a65}
+  .ramrfm-grid>*{min-width:0}
+  .ramrfm-grid .output-box{max-width:100%;overflow-x:auto;overflow-wrap:anywhere}
+  .ramrfm-grid table{width:100%;min-width:0;table-layout:auto}
+  .ramrfm-grid th,.ramrfm-grid td{white-space:normal;overflow-wrap:anywhere}
+  .math-steps{display:grid;gap:9px;margin-top:10px}
+  .math-step{display:block;width:100%;padding:10px 12px;border:1px solid #d5e3f7;border-radius:10px;background:#fff;font-family:"Cambria Math",Cambria,"Times New Roman",serif;font-size:17px;line-height:1.65;overflow-x:auto;overflow-wrap:normal}
+  .step-label{font-family:Inter,system-ui,sans-serif;font-size:12px;font-weight:800;color:#0b53d6;text-transform:uppercase;letter-spacing:.06em}
+  .quantity-control{display:grid;grid-template-columns:minmax(0,1fr) minmax(105px,145px)}
+  .quantity-control input{border-radius:12px 0 0 12px;border-right:0}
+  .quantity-control select{border-radius:0 12px 12px 0;background:#f8fafc;font-weight:750}
+  .display-controls{display:grid;grid-template-columns:minmax(0,1fr) minmax(120px,180px);gap:12px;margin-top:10px}
+  .rule-table{margin-top:14px}
+  .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+  footer{max-width:1440px;margin:0 auto;padding:0 clamp(18px,4vw,56px) 34px;color:var(--muted);font-size:13px}
+
+  @media (max-width:1100px){
+    .app-shell{grid-template-columns:220px minmax(0,1fr)}
+    .workspace{grid-template-columns:1fr}
+    .module-wide{grid-column:auto}
+    .info-grid{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width:1350px){.ramrfm-grid{grid-template-columns:1fr}}
+  @media (max-width:820px){
+    .topbar-inner{align-items:flex-start}.top-actions{display:none}
+    .course-strip-inner{align-items:flex-start;flex-direction:column;gap:7px}
+    .app-shell{display:block;padding:14px 12px 30px}
+    .sidebar{display:none}
+    .workspace{display:block}
+    .mobile-tabs{display:flex;position:sticky;top:0;z-index:9;gap:7px;overflow-x:auto;padding:9px 2px 12px;margin:0 0 4px;background:linear-gradient(var(--paper) 76%,rgba(245,247,251,0));scrollbar-width:none}
+    .mobile-tabs::-webkit-scrollbar{display:none}
+    .mobile-tabs .nav-btn{display:block;width:auto;min-width:max-content;color:#334155;background:#fff;border:1px solid var(--line);padding:9px 12px;min-height:42px;border-radius:999px}
+    .mobile-tabs .nav-btn.active{background:var(--navy);color:#fff}
+    .panel{border-radius:16px;margin-bottom:14px}
+    .panel h2{padding:15px 16px;font-size:17px}.panel .content{padding:16px}
+    .measurement-grid,.info-grid{grid-template-columns:1fr}
+  }
+  @media (max-width:520px){
+    header.topbar{padding:17px 15px}.mark{width:45px;height:45px;flex-basis:45px;border-radius:13px;font-size:18px}.identity{gap:11px}
+    header.topbar h1{font-size:22px}.course-strip-inner{padding:10px 15px}
+    .panel .content{padding:14px}.panel h2{font-size:16px}
+    .mobile-tabs{display:grid;grid-template-columns:1fr 1fr;overflow:visible;padding-bottom:10px}
+    .mobile-tabs .nav-btn{width:100%;min-width:0;text-align:center}
+    .row{gap:8px}.row button{flex:1 1 135px}
+    button{width:100%}.examples button{width:100%}
+    .badge{width:100%}.badge input{flex:0 0 auto}
+    .result{font-size:19px;padding:14px}
+    .tool-card{padding:14px}.formula-box{padding:12px}
+    .display-controls{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="identity">
+      <div class="mark" aria-hidden="true">Mu</div>
+      <div>
+        <h1>Introductory Chemistry Learning Studio</h1>
+        <div class="sub">Equations, stoichiometry, solutions, measurements and scientific reporting</div>
+      </div>
+    </div>
+    <div class="top-actions">
+      <span class="top-badge"><span class="dot"></span> Works offline</span>
+      <span class="top-badge">Undergraduate foundation</span>
+    </div>
+  </div>
+</header>
+
+<div class="course-strip">
+  <div class="course-strip-inner">
+    <div class="course-meta">
+      <span class="course-tag">SNAS CHEMISTRY</span>
+      <span><strong>Interactive calculation and learning workspace</strong></span>
+    </div>
+    <div class="course-meta"><span>Mulungushi University</span><span>•</span><span>Created by <strong>Mr Tembo ZN</strong></span></div>
+  </div>
+</div>
+
+<div class="app-shell">
+  <aside class="sidebar" aria-label="Chemistry modules">
+    <div class="sidebar-label">Learning modules</div>
+    <nav class="module-nav">
+      <button class="nav-btn active" data-target="balance"><span class="nav-num">01</span><span>Equation balancing</span></button>
+      <button class="nav-btn" data-target="stoich"><span class="nav-num">02</span><span>Stoichiometry & yield</span></button>
+      <button class="nav-btn" data-target="solutions"><span class="nav-num">03</span><span>Solution chemistry</span></button>
+      <button class="nav-btn" data-target="measurements"><span class="nav-num">04</span><span>Measurements & figures</span></button>
+      <button class="nav-btn" data-target="ramrfm"><span class="nav-num">05</span><span>RAM/RFM</span></button>
+    </nav>
+    <div class="sidebar-note">Chemical formulae use subscripts, ionic charges use superscripts, reaction arrows show direction, and physical states appear in parentheses.</div>
+  </aside>
+
+  <main class="workspace">
+    <nav class="mobile-tabs" aria-label="Chemistry modules">
+      <button class="nav-btn active" data-target="balance">Equations</button>
+      <button class="nav-btn" data-target="stoich">Stoichiometry</button>
+      <button class="nav-btn" data-target="solutions">Solutions</button>
+      <button class="nav-btn" data-target="measurements">Measurements</button>
+      <button class="nav-btn" data-target="ramrfm">RAM/RFM</button>
+    </nav>
+
+  <section class="panel module-wide" data-module="ramrfm">
+    <h2>RAM/RFM, Formulae and Combustion Analysis</h2>
+    <div class="content">
+      <p class="section-kicker">CHE 111 - Lecture 2</p>
+      <p class="lead">Solve relative atomic mass (RAM), relative molecular/formula mass (RFM), percentage composition, empirical and molecular formula, and combustion-analysis questions. Calculations show the working used to reach each result.</p>
+
+      <div class="measurement-grid ramrfm-grid">
+        <article class="tool-card">
+          <h3>1. Relative atomic mass (RAM)</h3>
+          <p>Enter isotope mass and percentage abundance pairs. Abundances must total 100%.</p>
+          <label class="small" for="ramData">Isotope mass, abundance % - one pair per line</label>
+          <textarea id="ramData" placeholder="35, 75.5&#10;37, 24.5">35, 75.5
+37, 24.5</textarea>
+          <div class="row" style="margin-top:10px"><button id="ramBtn">Calculate RAM</button><button id="ramClear" class="ghost">Clear</button></div>
+          <div id="ramOut" class="output-box" role="status" aria-live="polite">Enter isotope data.</div>
+        </article>
+
+        <article class="tool-card">
+          <h3>2. RFM and percentage composition</h3>
+          <p>Enter any molecular, empirical or ionic formula. The same mass calculation gives Mr for molecules and relative formula mass for ionic compounds.</p>
+          <label class="small" for="rfmFormula">Chemical formula</label>
+          <input id="rfmFormula" type="text" value="C11H17N3O8" placeholder="e.g., CaCl2 or C11H17N3O8">
+          <div class="row" style="margin-top:10px"><button id="rfmBtn">Calculate RFM and percentages</button><button id="rfmClear" class="ghost">Clear</button></div>
+          <div id="rfmOut" class="output-box" role="status" aria-live="polite">Enter a formula.</div>
+        </article>
+
+        <article class="tool-card">
+          <h3>3. Mass, molar mass and number of moles</h3>
+          <p>Calculate mass, molar mass, amount of substance or number of particles using Avogadro's number, and convert between base, milli and micro units.</p>
+          <label class="small" for="moleFormula">Chemical formula</label>
+          <input id="moleFormula" type="text" value="NaCl" placeholder="e.g., NaCl or H2SO4">
+          <div class="grid2" style="margin-top:10px">
+            <div><label class="small" for="moleMode">Calculate</label><select id="moleMode"><option value="moles">Number of moles</option><option value="mass">Mass</option><option value="particles">Number of particles</option><option value="molarMass">Molar mass only</option></select></div>
+            <div><label class="small" for="moleValue">Known quantity</label><div class="quantity-control"><input id="moleValue" type="number" step="any" value="5.00" aria-label="Known numerical value"><select id="moleUnit" aria-label="Unit for known value"><option value="g">g</option><option value="mg">mg</option><option value="ug">µg</option><option value="mol">mol</option><option value="mmol">mmol</option><option value="umol">µmol</option><option value="particles">particles</option></select></div></div>
+          </div>
+          <div class="display-controls">
+            <div><label class="small" for="moleView">Answer display</label><select id="moleView"><option value="decimal">Decimal notation</option><option value="standard">Standard form</option></select></div>
+            <div><label class="small" for="moleSig">Significant figures</label><input id="moleSig" type="number" min="1" max="12" value="4"></div>
+          </div>
+          <div class="row" style="margin-top:10px"><button id="moleBtn">Calculate and convert</button><button id="moleClear" class="ghost">Clear</button></div>
+          <div id="moleOut" class="output-box" role="status" aria-live="polite">Enter a formula and known quantity.</div>
+        </article>
+
+        <article class="tool-card">
+          <h3>4. Empirical and molecular formula</h3>
+          <p>Use either masses or percentages. Enter element and amount pairs. Add molar mass when the molecular formula is required.</p>
+          <label class="small" for="efData">Element, mass or percentage - one pair per line</label>
+          <textarea id="efData" placeholder="C, 65.45&#10;H, 5.45&#10;O, 29.09">C, 65.45
+H, 5.45
+O, 29.09</textarea>
+          <label class="small" for="efMolar" style="margin-top:10px">Compound molar mass (g/mol, optional)</label>
+          <input id="efMolar" type="number" step="any" value="110.0" placeholder="e.g., 110.0">
+          <div class="row" style="margin-top:10px"><button id="efBtn">Determine formula</button><button id="efClear" class="ghost">Clear</button></div>
+          <div id="efOut" class="output-box" role="status" aria-live="polite">Enter composition data.</div>
+        </article>
+
+        <article class="tool-card">
+          <h3>5. Combustion analysis</h3>
+          <p>For a C/H/O sample, oxygen is found by mass difference. For a C/H/N sample, nitrogen is found by mass difference.</p>
+          <div class="grid2">
+            <div><label class="small" for="combSample">Sample mass (g)</label><input id="combSample" type="number" step="any" value="0.255"></div>
+            <div><label class="small" for="combCO2">CO₂ produced (g)</label><input id="combCO2" type="number" step="any" value="0.561"></div>
+            <div><label class="small" for="combH2O">H₂O produced (g)</label><input id="combH2O" type="number" step="any" value="0.306"></div>
+            <div><label class="small" for="combThird">Third element</label><select id="combThird"><option value="O">Oxygen (C/H/O)</option><option value="N">Nitrogen (C/H/N)</option><option value="none">None (C/H only)</option></select></div>
+          </div>
+          <label class="small" for="combMolar" style="margin-top:10px">Compound molar mass (g/mol, optional)</label>
+          <input id="combMolar" type="number" step="any" placeholder="e.g., 79.01">
+          <div class="row" style="margin-top:10px"><button id="combBtn">Analyse combustion</button><button id="combClear" class="ghost">Clear</button></div>
+          <div id="combOut" class="output-box" role="status" aria-live="polite">Enter combustion data.</div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel active-module" data-module="balance">
+    <h2>Balance a Chemical Equation</h2>
+    <div class="content">
+      <p class="section-kicker">Conservation of mass and charge</p>
+      <p class="lead">Enter reactants and products using ordinary keyboard characters. The balanced result is displayed with conventional chemical typography.</p>
+      <label class="small" for="eqn">Unbalanced equation</label>
+      <input id="eqn" type="text" placeholder="Enter equation, e.g., KMnO4 + HCl -> KCl + MnCl2 + Cl2 + H2O">
+      <div class="help">Use <code>+</code> between species and <code>-&gt;</code> or <span class="chem">→</span> for the reaction arrow. Write ionic charge as <code>Fe^3+</code>.</div>
+      <div class="row" style="margin-top:12px">
+        <label class="badge"><input id="includeCharge" type="checkbox" checked> Enforce charge conservation</label>
+        <button id="balanceBtn" title="Compute smallest integer coefficients">Balance</button>
+        <button id="clearBtn" class="ghost">Clear</button>
+        <button id="copyBtn" class="ghost">Copy result</button>
+        <button id="latexBtn" class="ghost">Copy LaTeX</button>
+      </div>
+
+      <div id="status" class="small" style="margin-top:10px;"></div>
+
+      <div style="margin-top:12px">
+        <div class="result" id="result" role="status" aria-live="polite">Balanced equation will appear here.</div>
+      </div>
+
+      <div id="checks" class="small" style="margin-top:10px"></div>
+    </div>
+  </section>
+
+  <section class="panel active-module" data-module="balance">
+    <h2>Notation Guide and Examples</h2>
+    <div class="content">
+      <p class="lead">Only coefficients may be changed when balancing. Subscripts remain part of each compound’s identity.</p>
+      <div class="formula-box">
+        <span class="equation"><span class="coefficient">2</span>H<sub>2</sub>(g) + O<sub>2</sub>(g) → <span class="coefficient">2</span>H<sub>2</sub>O(l)</span>
+        <div class="help">Coefficients are full-size numbers before a species; atom counts are subscripts; ionic charges are superscripts; state symbols stay on the baseline.</div>
+      </div>
+      <div class="examples">
+        <p class="section-kicker" style="margin-top:16px">Load an example</p>
+        <div class="row">
+          <button class="ghost ex" data-equation="C3H8 + O2 -> CO2 + H2O">C<sub>3</sub>H<sub>8</sub> + O<sub>2</sub> → CO<sub>2</sub> + H<sub>2</sub>O</button>
+          <button class="ghost ex" data-equation="Fe2(SO4)3 + KOH -> K2SO4 + Fe(OH)3">Fe<sub>2</sub>(SO<sub>4</sub>)<sub>3</sub> + KOH → K<sub>2</sub>SO<sub>4</sub> + Fe(OH)<sub>3</sub></button>
+          <button class="ghost ex" data-equation="KMnO4 + HCl -> KCl + MnCl2 + Cl2 + H2O">KMnO<sub>4</sub> + HCl → KCl + MnCl<sub>2</sub> + Cl<sub>2</sub> + H<sub>2</sub>O</button>
+          <button class="ghost ex" data-equation="Cr2O7^2- + Fe^2+ + H+ -> Cr^3+ + Fe^3+ + H2O">Cr<sub>2</sub>O<sub>7</sub><sup>2−</sup> + Fe<sup>2+</sup> + H<sup>+</sup> → Cr<sup>3+</sup> + Fe<sup>3+</sup> + H<sub>2</sub>O</button>
+          <button class="ghost ex" data-equation="Fe^3+ + e- -> Fe^2+">Fe<sup>3+</sup> + e<sup>−</sup> → Fe<sup>2+</sup></button>
+          <button class="ghost ex" data-equation="CuSO4·5H2O -> CuSO4 + H2O">CuSO<sub>4</sub>·5H<sub>2</sub>O → CuSO<sub>4</sub> + H<sub>2</sub>O</button>
+        </div>
+      </div>
+
+      <h3 style="margin-top:14px;font-size:15px;color:#0b318c">Parsed Elements Table</h3>
+      <div id="elemTableWrap" class="small"></div>
+    </div>
+  </section>
+
+  <section class="panel module-wide" data-module="stoich">
+    <h2>Stoichiometry & Yields</h2>
+    <div class="content">
+      <div class="small">Use the balanced coefficients to compute moles, masses, solution volumes, and % yield. First balance above, then fill the fields below.</div>
+      <div class="grid2" style="margin-top:10px">
+        <div>
+          <label class="small" for="basisSpecies">Basis (known) species</label>
+          <select id="basisSpecies"></select>
+        </div>
+        <div>
+          <label class="small" for="basisType">Known type</label>
+          <select id="basisType">
+            <option value="moles">Moles (mol)</option>
+            <option value="mass">Mass (g)</option>
+            <option value="solution">Solution volume & molarity</option>
+            <option value="gasstp">Gas @ STP volume (L)</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="basisInputs" style="margin-top:8px"></div>
+
+      <div class="inline" style="margin-top:12px">
+        <label class="small"><input id="limitBasis" type="checkbox" checked> Treat basis species as limiting reagent</label>
+        <span class="pill dim">Gas STP molar volume = 22.414 L·mol⁻¹</span>
+      </div>
+
+      <div class="row" style="margin-top:12px">
+        <button id="calcStoich">Calculate amounts</button>
+        <button id="clearStoich" class="ghost">Clear</button>
+      </div>
+
+      <div id="stoichOut" style="margin-top:12px"></div>
+
+      <h3 style="margin-top:18px;font-size:15px;color:#0b318c">Percentage Yield (optional)</h3>
+      <div class="grid2">
+        <div>
+          <label class="small" for="yieldSpecies">Target product species</label>
+          <select id="yieldSpecies"></select>
+        </div>
+        <div>
+          <label class="small" for="yieldType">Actual amount measured (choose type)</label>
+          <select id="yieldType">
+            <option value="mass">Mass (g)</option>
+            <option value="moles">Moles (mol)</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid2" style="margin-top:8px">
+        <div>
+          <label class="sr-only" for="yieldValue">Actual amount measured</label>
+          <input id="yieldValue" type="number" placeholder="Enter actual amount">
+        </div>
+        <div class="inline small dim">Theoretical amount will be taken from the stoichiometry table.</div>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button id="calcYield">Compute % yield</button>
+      </div>
+      <div id="yieldOut" style="margin-top:10px" class="small"></div>
+    </div>
+  </section>
+
+  <section class="panel module-wide" data-module="solutions">
+    <h2>Solution Concentrations & Unit Conversions</h2>
+    <div class="content">
+      <div class="grid2">
+        <div>
+          <label class="small" for="concFormula">Solute chemical formula (for molar mass)</label>
+          <input id="concFormula" type="text" placeholder="e.g., Na2CO3·10H2O or H2SO4">
+        </div>
+        <div class="inline" style="align-items:flex-end">
+          <div>
+            <label class="small" for="concEqPerMol">Equivalents per mole (n)</label>
+            <input id="concEqPerMol" type="number" step="any" value="1" placeholder="e.g., 2 for H2SO4 in acid-base">
+            <div class="help"><span class="chem">N = M × n</span>. The equivalence factor depends on the acid–base, redox or precipitation reaction.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="inline" style="margin-top:8px">
+        <span class="pill">Molar mass: <strong id="concMM">—</strong> g·mol⁻¹</span>
+      </div>
+
+      <h3 style="margin-top:16px;font-size:16px;color:#0b318c">A. Calculate concentration from mass and volume</h3>
+      <div class="formula-box"><span class="math-display">c = n/V &nbsp;&nbsp; and &nbsp;&nbsp; n = m/M<sub>r</sub></span></div>
+      <div class="grid2">
+        <div>
+          <label class="small" for="concMass">Mass of solute</label>
+          <div class="row">
+            <input id="concMass" type="number" step="any" placeholder="e.g., 2.50">
+            <select id="concMassUnit">
+              <option value="g">g</option>
+              <option value="mg">mg</option>
+              <option value="ug">µg</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="small" for="concVol">Solution volume</label>
+          <div class="row">
+            <input id="concVol" type="number" step="any" placeholder="e.g., 0.250">
+            <select id="concVolUnit">
+              <option value="L">L</option>
+              <option value="mL">mL</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button id="concCalcA">Calculate concentrations</button>
+        <button id="concClearA" class="ghost">Clear</button>
+      </div>
+      <div id="concOutA" class="small" style="margin-top:10px"></div>
+
+      <h3 style="margin-top:18px;font-size:16px;color:#0b318c">B. Calculate the mass required for a target concentration</h3>
+      <div class="formula-box"><span class="math-display">m = cVM<sub>r</sub></span></div>
+      <div class="grid2">
+        <div>
+          <label class="small" for="concTypeB">Target concentration type</label>
+          <select id="concTypeB">
+            <option value="M">Molarity (M)</option>
+            <option value="N">Normality (N)</option>
+            <option value="F">Formality (F)</option>
+            <option value="gL">g/L</option>
+            <option value="mgL">mg/L</option>
+            <option value="ugL">µg/L</option>
+          </select>
+        </div>
+        <div>
+          <label class="small" for="concValB">Target value</label>
+          <input id="concValB" type="number" step="any" placeholder="e.g., 0.100">
+        </div>
+      </div>
+      <div class="grid2" style="margin-top:8px">
+        <div>
+          <label class="small" for="concVolB">Final solution volume</label>
+          <div class="row">
+            <input id="concVolB" type="number" step="any" placeholder="e.g., 1.000">
+            <select id="concVolBUnit">
+              <option value="L">L</option>
+              <option value="mL">mL</option>
+            </select>
+          </div>
+        </div>
+        <div class="inline" style="align-items:flex-end">
+          <div class="help">For N: required mass uses n‑equiv per mole.</div>
+        </div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button id="concCalcB">Calculate mass to weigh</button>
+        <button id="concClearB" class="ghost">Clear</button>
+      </div>
+      <div id="concOutB" class="small" style="margin-top:10px"></div>
+    </div>
+  </section>
+
+  <section class="panel module-wide" data-module="measurements">
+    <h2>Standard Form, Significant Figures and Measurements</h2>
+    <div class="content">
+      <p class="section-kicker">Undergraduate chemistry foundations</p>
+      <p class="lead">Report every measured quantity with a numerical value, an appropriate unit, and precision justified by the measuring instrument.</p>
+
+      <div class="info-grid">
+        <article class="info-card">
+          <h3>Standard form</h3>
+          <p>Write a non-zero number as <span class="chem">a × 10<sup>n</sup></span>, where <span class="chem">1 ≤ |a| &lt; 10</span> and <em>n</em> is an integer.</p>
+          <span class="equation">0.000450 = 4.50 × 10<sup>−4</sup></span>
+        </article>
+        <article class="info-card">
+          <h3>Significant figures</h3>
+          <p>All non-zero digits count. Zeros between significant digits count. Leading zeros do not count. Trailing zeros count only when the decimal notation makes them explicit.</p>
+          <span class="equation">0.004050 has 4 s.f.</span>
+        </article>
+        <article class="info-card">
+          <h3>Measurement statement</h3>
+          <p>Record a measured value and its uncertainty to the same decimal place. Include the unit outside the brackets.</p>
+          <span class="equation">V = (25.00 ± 0.03) mL</span>
+        </article>
+      </div>
+
+      <div class="measurement-grid" style="margin-top:18px">
+        <article class="tool-card">
+          <h3>Standard form converter</h3>
+          <p>Convert a decimal value and round the coefficient to a selected number of significant figures.</p>
+          <div class="grid2">
+            <div>
+              <label class="small" for="standardValue">Value</label>
+              <input id="standardValue" type="text" inputmode="decimal" placeholder="e.g., 0.0004500">
+            </div>
+            <div>
+              <label class="small" for="standardSf">Significant figures</label>
+              <input id="standardSf" type="number" min="1" max="12" value="3">
+            </div>
+          </div>
+          <div class="row" style="margin-top:10px"><button id="standardBtn">Convert to standard form</button></div>
+          <div id="standardOut" class="output-box" role="status" aria-live="polite">Enter a value to convert.</div>
+        </article>
+
+        <article class="tool-card">
+          <h3>Significant-figure checker</h3>
+          <p>Count significant figures from the written form. Use a decimal point to show significant trailing zeros.</p>
+          <label class="small" for="sigInput">Written number</label>
+          <input id="sigInput" type="text" inputmode="decimal" placeholder="e.g., 12.0300 or 1.20300e1">
+          <div class="row" style="margin-top:10px"><button id="sigBtn">Count significant figures</button></div>
+          <div id="sigOut" class="output-box" role="status" aria-live="polite">Enter the number exactly as it was reported.</div>
+        </article>
+
+        <article class="tool-card">
+          <h3>Calculation and reporting rules</h3>
+          <p>Apply the rule required by the mathematical operation, then round once at the end.</p>
+          <div class="grid2">
+            <div><label class="small" for="calcA">First value</label><input id="calcA" type="text" inputmode="decimal" placeholder="12.11"></div>
+            <div><label class="small" for="calcB">Second value</label><input id="calcB" type="text" inputmode="decimal" placeholder="0.3"></div>
+          </div>
+          <div style="margin-top:10px">
+            <label class="small" for="sigOperation">Operation</label>
+            <select id="sigOperation">
+              <option value="add">Addition (+)</option>
+              <option value="subtract">Subtraction (−)</option>
+              <option value="multiply">Multiplication (×)</option>
+              <option value="divide">Division (÷)</option>
+            </select>
+          </div>
+          <div class="row" style="margin-top:10px"><button id="sigCalcBtn">Calculate and report</button></div>
+          <div id="sigCalcOut" class="output-box" role="status" aria-live="polite">Addition and subtraction follow decimal places; multiplication and division follow significant figures.</div>
+        </article>
+
+        <article class="tool-card">
+          <h3>Repeated-measurement summary</h3>
+          <p>Enter replicate values separated by commas or spaces. The uncertainty is estimated as half the range for this introductory treatment.</p>
+          <label class="small" for="measurementsInput">Replicate measurements</label>
+          <textarea id="measurementsInput" placeholder="25.10, 25.05, 25.15, 25.08"></textarea>
+          <label class="small" for="measurementUnit" style="margin-top:8px">Unit</label>
+          <input id="measurementUnit" type="text" value="mL" placeholder="e.g., mL">
+          <div class="row" style="margin-top:10px"><button id="measureBtn">Summarise measurements</button></div>
+          <div id="measureOut" class="output-box" role="status" aria-live="polite">The mean, range, half-range, relative uncertainty and sample standard deviation will appear here.</div>
+        </article>
+      </div>
+
+      <div class="table-wrap rule-table">
+        <table>
+          <thead><tr><th>Situation</th><th>Reporting rule</th><th>Example</th></tr></thead>
+          <tbody>
+            <tr><td>Analogue scale</td><td>Estimate one digit beyond the smallest marked division when the scale permits.</td><td>A 1 mL graduated cylinder scale may justify an estimated reading such as 18.4 mL.</td></tr>
+            <tr><td>Digital instrument</td><td>Record every displayed digit unless the instrument is unstable or specified otherwise.</td><td>A balance displaying 2.347 g is recorded as 2.347 g.</td></tr>
+            <tr><td>Addition or subtraction</td><td>Round to the least number of decimal places among the inputs.</td><td>12.11 + 0.3 = 12.4</td></tr>
+            <tr><td>Multiplication or division</td><td>Round to the fewest significant figures among the inputs.</td><td>4.56 × 1.4 = 6.4</td></tr>
+            <tr><td>Exact counts and defined factors</td><td>Do not limit significant figures.</td><td>3 samples and 1000 mL = 1 L are exact.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="formula-box">
+        <strong>Core measurement relationships</strong>
+        <span class="math-display">absolute uncertainty = ±(maximum − minimum)/2</span>
+        <span class="math-display">relative uncertainty (%) = (absolute uncertainty / mean) × 100</span>
+        <div class="help">Accuracy describes closeness to an accepted value. Precision describes agreement among repeated measurements. A precise data set can still be inaccurate if systematic error is present.</div>
+      </div>
+    </div>
+  </section>
+  </main>
+</div>
+
+<footer>
+  Use “Copy LaTeX” to transfer a balanced equation into Word or Moodle equation tools. Mulungushi University — School of Natural and Applied Sciences — Created by Mr Tembo ZN
+</footer>
+
+<script>
+// ===== Atomic weights (IUPAC conventional; 2–3 dp for teaching) =====
+const ATOMIC_MASS = {
+H:1.008, He:4.0026, Li:6.94, Be:9.0122, B:10.81, C:12.011, N:14.007, O:15.999, F:18.998, Ne:20.180,
+Na:22.990, Mg:24.305, Al:26.982, Si:28.085, P:30.974, S:32.06, Cl:35.45, Ar:39.948, K:39.098, Ca:40.078,
+Sc:44.956, Ti:47.867, V:50.942, Cr:51.996, Mn:54.938, Fe:55.845, Co:58.933, Ni:58.693, Cu:63.546, Zn:65.38,
+Ga:69.723, Ge:72.630, As:74.922, Se:78.971, Br:79.904, Kr:83.798, Rb:85.468, Sr:87.62, Y:88.906, Zr:91.224,
+Nb:92.906, Mo:95.95, Tc:98, Ru:101.07, Rh:102.91, Pd:106.42, Ag:107.87, Cd:112.41, In:114.82, Sn:118.71,
+Sb:121.76, Te:127.60, I:126.90, Xe:131.29, Cs:132.91, Ba:137.33, La:138.91, Ce:140.12, Pr:140.91, Nd:144.24,
+Sm:150.36, Eu:151.96, Gd:157.25, Tb:158.93, Dy:162.50, Ho:164.93, Er:167.26, Tm:168.93, Yb:173.05, Lu:174.97,
+Hf:178.49, Ta:180.95, W:183.84, Re:186.21, Os:190.23, Ir:192.22, Pt:195.08, Au:196.97, Hg:200.59, Tl:204.38,
+Pb:207.2, Bi:208.98, Po:209, At:210, Rn:222, Fr:223, Ra:226, Ac:227, Th:232.04, Pa:231.04, U:238.03
+};
+
+// ===== Utility: Fraction arithmetic (exact) =====
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b]}return a||1;}
+function lcm(a,b){return Math.abs(a*b)/gcd(a,b);}
+class Frac{
+  constructor(n=0,d=1){ if(d===0) throw new Error("Denominator  0"); if(d<0){n=-n; d=-d;} const g=gcd(n,d); this.n=n/g; this.d=d/g; }
+  static from(x){ if(x instanceof Frac) return new Frac(x.n,x.d); if(Number.isInteger(x)) return new Frac(x,1); return new Frac(Math.round(x*1e12),1e12); }
+  add(o){o=Frac.from(o); return new Frac(this.n*o.d+o.n*this.d, this.d*o.d);}
+  sub(o){o=Frac.from(o); return new Frac(this.n*o.d-o.n*this.d, this.d*o.d);}
+  mul(o){o=Frac.from(o); return new Frac(this.n*o.n, this.d*o.d);}
+  div(o){o=Frac.from(o); return new Frac(this.n*o.d, this.d*o.n);}
+  neg(){return new Frac(-this.n,this.d);}
+  isZero(){return this.n===0;}
+  valueOf(){return this.n/this.d;}
+  toString(){ if(this.d===1) return ""+this.n; return this.n+"/"+this.d; }
+}
+
+// ===== Parser & helpers (from balancer) =====
+function normalizeArrow(str){
+  return str.replace(/⟶|→|⇒|=>|=/g,"->").replace(/<-+>|⇌|↔/g,"->");
+}
+function stripStates(s){ return s.replace(/\((aq|s|l|g)\)/gi,""); }
+function splitSides(eqnStr){
+  const s = normalizeArrow(eqnStr);
+  if(!s.includes("->")) throw new Error("No arrow found. Use '->' or '→'.");
+  const [L,R] = s.split("->");
+  return [L,R];
+}
+function splitSpecies(side){
+  return side.trim().split(/\s+\+\s+/).map(x=>x.trim()).filter(Boolean);
+}
+
+function escapeHTML(value){
+  return String(value).replace(/[&<>"']/g, ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+}
+
+const SUBSCRIPT_DIGITS = {"0":"₀","1":"₁","2":"₂","3":"₃","4":"₄","5":"₅","6":"₆","7":"₇","8":"₈","9":"₉"};
+const SUPERSCRIPT_CHARS = {"0":"⁰","1":"¹","2":"²","3":"³","4":"⁴","5":"⁵","6":"⁶","7":"⁷","8":"⁸","9":"⁹","+":"⁺","-":"⁻"};
+
+function chemParts(raw){
+  let value = String(raw).trim();
+  const stateMatch = value.match(/\((aq|s|l|g)\)$/i);
+  const state = stateMatch ? stateMatch[0] : "";
+  if(state) value = value.slice(0,-state.length);
+  if(/^e\^?[+-]$/i.test(value)){
+    return {core:"e",charge:value.endsWith("+")?"+":"-",state};
+  }
+  let charge = "";
+  const caretCharge = value.match(/\^([0-9]*)([+-])$/);
+  if(caretCharge){
+    charge = (caretCharge[1] || "") + caretCharge[2];
+    value = value.slice(0,-caretCharge[0].length);
+  }else{
+    const signOnly = value.match(/([+-])$/);
+    if(signOnly){ charge=signOnly[1]; value=value.slice(0,-1); }
+  }
+  return {core:value,charge,state};
+}
+
+function chemHTML(raw){
+  const {core,charge,state} = chemParts(raw);
+  let html = escapeHTML(core).replace(/\./g,"·");
+  html = html.replace(/([A-Za-z\)\]])([0-9]+)/g,"$1<sub>$2</sub>");
+  const chargeHTML = charge ? `<sup>${escapeHTML(charge.replace("-","−"))}</sup>` : "";
+  return `<span class="chem">${html}${chargeHTML}${escapeHTML(state)}</span>`;
+}
+
+function chemText(raw){
+  const {core,charge,state} = chemParts(raw);
+  let text = core.replace(/\./g,"·").replace(/([A-Za-z\)\]])([0-9]+)/g,(m,p,d)=>p+[...d].map(x=>SUBSCRIPT_DIGITS[x]).join(""));
+  if(charge) text += [...charge].map(x=>SUPERSCRIPT_CHARS[x]).join("");
+  return text + state;
+}
+
+function extractCharge(spec){
+  let s = spec.trim();
+  if(/^e(\^-|-)$/i.test(s) || /^e-$/i.test(s) || /^electron$/i.test(s)){
+    return { core:"", charge:-1, isElectron:true, label:s };
+  }
+  if(/^e(\^\+|\+)$/i.test(s) || /^e\+$/i.test(s)){
+    return { core:"", charge:+1, isElectron:true, label:s };
+  }
+  s = stripStates(s);
+  let charge = 0;
+  let m = s.match(/^(.*?)\^([0-9]*)([+-])$/);
+  if(m){
+    const mag = m[2] ? parseInt(m[2],10) : 1;
+    charge = m[3] === "+" ? mag : -mag;
+    s = m[1];
+  }else{
+    m = s.match(/^(.*?)([+-])$/);
+    if(m){ charge = m[2] === "+" ? 1 : -1; s=m[1]; }
+  }
+  return { core:s, charge, isElectron:false, label:spec.trim() };
+}
+function parseCoreFormula(core){
+  if(!core) return {};
+  let i=0; const len=core.length; const stack=[{}];
+  function addCount(map, el, cnt){ if(!map[el]) map[el]=0; map[el]+=cnt; }
+  function parseNumber(){ let j=i; while(j<len && /[0-9]/.test(core[j])) j++; if(j===i) return 1; const n=parseInt(core.slice(i,j),10); i=j; return n; }
+  while(i<len){
+    const ch = core[i];
+    if(ch==="(" || ch==="[" || ch==="{"){ stack.push({}); i++; }
+    else if(ch===")" || ch==="]" || ch==="}"){
+      i++; const mult = parseNumber();
+      const top=stack.pop(); const cur=stack[stack.length-1];
+      for(const el in top){ addCount(cur, el, top[el]*mult); }
+    } else if(ch==="·" || ch==="."){ i++; }
+    else if(/[A-Z]/.test(ch)){
+      let j=i+1; if(j<len && /[a-z]/.test(core[j])) j++;
+      const el=core.slice(i,j); i=j;
+      const mult = parseNumber();
+      addCount(stack[stack.length-1], el, mult);
+    } else if(/\s/.test(ch)){ i++; }
+    else { throw new Error("Unexpected token '"+ch+"' in '"+core+"'"); }
+  }
+  if(stack.length!==1) throw new Error("Unmatched parentheses in '"+core+"'");
+  return stack[0];
+}
+function parseSpecies(spec){
+  const {core, charge, isElectron, label} = extractCharge(spec);
+  if(isElectron){ return { label, atoms:{}, charge, isElectron:true }; }
+  const parts = core.split(/·|\./).map(s=>s.trim()).filter(Boolean);
+  let atoms = {};
+  function mergeCounts(dst, src, mult){ for(const k in src){ dst[k] = (dst[k]||0) + src[k]*mult; } }
+  for(const p of parts){
+    const m = p.match(/^([0-9]+)([A-Za-z({[].*)$/);
+    if(m){ const mult=parseInt(m[1],10); const f=parseCoreFormula(m[2]); mergeCounts(atoms,f,mult); }
+    else { const f=parseCoreFormula(p); mergeCounts(atoms,f,1); }
+  }
+  return { label: label || spec.trim(), atoms, charge: (charge||0), isElectron:false };
+}
+
+// ===== Build matrix & solve nullspace =====
+function buildMatrix(leftSpecs, rightSpecs, includeCharge){
+  const species = leftSpecs.concat(rightSpecs);
+  const parsed = species.map(parseSpecies);
+  const elemSet = new Set();
+  parsed.forEach(p=>{ for(const el in p.atoms) elemSet.add(el); });
+  if(includeCharge) elemSet.add("charge");
+  const elements = Array.from(elemSet);
+  const m = elements.length; const n = species.length;
+  const A = Array.from({length:m}, _=> Array.from({length:n}, _=> new Frac(0,1)));
+  elements.forEach((el, r)=>{
+    parsed.forEach((p, c)=>{
+      let count = 0;
+      if(el==="charge" && includeCharge){ count = p.charge || 0; }
+      else { count = p.atoms[el] || 0; }
+      if(c < leftSpecs.length) A[r][c] = new Frac(count,1);
+      else A[r][c] = new Frac(-count,1);
+    });
+  });
+  return {A, elements, parsed, nLeft:leftSpecs.length, speciesAll: species};
+}
+function rref(A){
+  const m=A.length, n=A[0].length;
+  let row=0; const pivotCols=[];
+  for(let col=0; col<n && row<m; col++){
+    let piv=row; while(piv<m && A[piv][col].isZero()) piv++;
+    if(piv===m) continue;
+    if(piv!==row){ const tmp=A[piv]; A[piv]=A[row]; A[row]=tmp; }
+    const pivVal = A[row][col];
+    for(let j=col;j<n;j++) A[row][j] = A[row][j].div(pivVal);
+    for(let i=0;i<m;i++){
+      if(i===row) continue;
+      const factor = A[i][col];
+      if(factor.isZero()) continue;
+      for(let j=col;j<n;j++){
+        A[i][j] = A[i][j].sub( A[row][j].mul(factor) );
+      }
+    }
+    pivotCols.push(col);
+    row++;
+  }
+  return {A, pivotCols};
+}
+function nullspaceOneVector(Ain){
+  const m=Ain.length, n=Ain[0].length;
+  const A = Ain.map(row=>row.map(x=>new Frac(x.n,x.d)));
+  const {A:Arref, pivotCols} = rref(A);
+  const pivSet = new Set(pivotCols);
+  const freeCols = []; for(let j=0;j<n;j++) if(!pivSet.has(j)) freeCols.push(j);
+  if(freeCols.length===0) throw new Error("No free variable found; equation may be over-constrained.");
+  for(const fcol of freeCols){
+    const vec = Array(n).fill(new Frac(0,1)).map(()=>new Frac(0,1));
+    vec[fcol] = new Frac(1,1);
+    for(let r=0;r<Arref.length;r++){
+      let pc = Arref[r].findIndex(x=>x.valueOf()===1);
+      if(pc<0) continue;
+      let sum = new Frac(0,1);
+      for(const j of freeCols){ if(j===fcol) sum = sum.add(Arref[r][j]); }
+      vec[pc] = sum.neg();
+    }
+    let L = 1; vec.forEach(fr=>{ L = lcm(L, fr.d); });
+    let ints = vec.map(fr=> fr.n * (L/fr.d));
+    const minV = Math.min(...ints), maxV = Math.max(...ints);
+    if(minV<0 && Math.abs(minV)>maxV) ints = ints.map(x=>-x);
+    let G = 0; ints.forEach(x=>{ G = gcd(G, Math.abs(x)); }); if(G>1) ints = ints.map(x=>x/G);
+    if(ints.every(x=>x>0)){ return ints; }
+  }
+  throw new Error("Could not find a positive integer solution. Check the equation or toggle charge conservation.");
+}
+function formatEquation(speciesLeft, speciesRight, coeffs){
+  const left = speciesLeft.map((s, i)=> (coeffs[i]===1? "" : coeffs[i]+" ") + s.trim()).join(" + ");
+  const offset = speciesLeft.length;
+  const right = speciesRight.map((s, j)=> (coeffs[offset+j]===1? "" : coeffs[offset+j]+" ") + s.trim()).join(" + ");
+  return left + " → " + right;
+}
+function formatEquationHTML(speciesLeft, speciesRight, coeffs){
+  const formatSide = (species,offset)=>species.map((s,i)=>{
+    const c = coeffs[offset+i];
+    return `${c===1?"":`<span class="coefficient">${c}</span>`}${chemHTML(s)}`;
+  }).join(" <span aria-hidden='true'>+</span> ");
+  return formatSide(speciesLeft,0) + " <span aria-hidden='true'>→</span> " + formatSide(speciesRight,speciesLeft.length);
+}
+function makeElemTable(elements, parsed, coeffs, nLeft){
+  const leftCounts={}, rightCounts={}; elements.forEach(el=>{leftCounts[el]=0; rightCounts[el]=0;});
+  parsed.forEach((p, idx)=>{
+    const mult = coeffs[idx];
+    const side = (idx < nLeft) ? leftCounts : rightCounts;
+    if("charge" in leftCounts) side["charge"] += (p.charge||0)*mult;
+    for(const el in p.atoms){ side[el] += (p.atoms[el]||0)*mult; }
+  });
+  let html = "<table><tr><th>Element</th><th>Left</th><th>Right</th><th>Balanced?</th></tr>";
+  elements.forEach(el=>{
+    const L = leftCounts[el]||0; const R = rightCounts[el]||0; const ok = L===R;
+    html += `<tr><td>${el}</td><td>${L}</td><td>${R}</td><td>${ok? "<span class='ok'>✓</span>" : "<span class='bad'>✗</span>"}</td></tr>`;
+  });
+  html += "</table>";
+  return {html, leftCounts, rightCounts};
+}
+function toLatex(speciesLeft, speciesRight, coeffs){
+  function texify(s){
+    let t = s.replace(/\s/g,"").replace(/\((aq|s|l|g)\)/gi,"");
+    t = t.replace(/·/g,"\\cdot ");
+    t = t.replace(/\^?([0-9]+)([+-])$/,"^{\$1\$2}");
+    t = t.replace(/([A-Za-z\)])([0-9]+)/g,"$1_{\$2}");
+    t = t.replace(/^e-$/,"e^{-}").replace(/^e\+$/,"e^{+}");
+    return t;
+  }
+  const left = speciesLeft.map((s,i)=> (coeffs[i]===1? "" : coeffs[i]) + texify(s)).join(" + ");
+  const off = speciesLeft.length;
+  const right = speciesRight.map((s,j)=> (coeffs[off+j]===1? "" : coeffs[off+j]) + texify(s)).join(" + ");
+  return left + " \\rightarrow " + right;
+}
+
+// ===== Molar mass from parsed atoms =====
+function molarMassFromAtoms(atoms){
+  let mm = 0;
+  for(const el in atoms){
+    const w = ATOMIC_MASS[el];
+    if(!w) throw new Error("Unknown atomic weight for element: "+el);
+    mm += w * atoms[el];
+  }
+  return mm; // g/mol
+}
+
+// ===== Global UI refs =====
+const eqn = document.getElementById("eqn");
+const balanceBtn = document.getElementById("balanceBtn");
+const clearBtn = document.getElementById("clearBtn");
+const copyBtn = document.getElementById("copyBtn");
+const latexBtn = document.getElementById("latexBtn");
+const includeCharge = document.getElementById("includeCharge");
+const resultDiv = document.getElementById("result");
+const status = document.getElementById("status");
+const elemTableWrap = document.getElementById("elemTableWrap");
+const checks = document.getElementById("checks");
+// Stoich UI
+const basisSpecies = document.getElementById("basisSpecies");
+const basisType = document.getElementById("basisType");
+const basisInputs = document.getElementById("basisInputs");
+const limitBasis = document.getElementById("limitBasis");
+const calcStoich = document.getElementById("calcStoich");
+const clearStoich = document.getElementById("clearStoich");
+const stoichOut = document.getElementById("stoichOut");
+const yieldSpecies = document.getElementById("yieldSpecies");
+const yieldType = document.getElementById("yieldType");
+const yieldValue = document.getElementById("yieldValue");
+const calcYield = document.getElementById("calcYield");
+const yieldOut = document.getElementById("yieldOut");
+// Concentration UI
+const concFormula = document.getElementById("concFormula");
+const concEqPerMol = document.getElementById("concEqPerMol");
+const concMMSpan = document.getElementById("concMM");
+const concMass = document.getElementById("concMass");
+const concMassUnit = document.getElementById("concMassUnit");
+const concVol = document.getElementById("concVol");
+const concVolUnit = document.getElementById("concVolUnit");
+const concCalcA = document.getElementById("concCalcA");
+const concClearA = document.getElementById("concClearA");
+const concOutA = document.getElementById("concOutA");
+const concTypeB = document.getElementById("concTypeB");
+const concValB = document.getElementById("concValB");
+const concVolB = document.getElementById("concVolB");
+const concVolBUnit = document.getElementById("concVolBUnit");
+const concCalcB = document.getElementById("concCalcB");
+const concClearB = document.getElementById("concClearB");
+
+// ===== State =====
+let lastParsed = null; // {left,right,coeffs, parsed, speciesAll, nLeft}
+let lastStoich = null; // store latest stoich table for yield use
+
+function populateSpeciesSelects(speciesAll){
+  basisSpecies.innerHTML = "";
+  yieldSpecies.innerHTML = "";
+  speciesAll.forEach((s, idx)=>{
+    const opt1 = document.createElement("option"); opt1.value=idx; opt1.textContent=chemText(s);
+    const opt2 = document.createElement("option"); opt2.value=idx; opt2.textContent=chemText(s);
+    basisSpecies.appendChild(opt1); yieldSpecies.appendChild(opt2);
+  });
+}
+
+function renderBasisInputs(){
+  const t = basisType.value;
+  if(t==="moles"){
+    basisInputs.innerHTML = `<div class="grid2">
+      <div><label class="small" for="basisMoles">Known moles (mol)</label><input id="basisMoles" type="number" step="any" placeholder="e.g., 0.050"></div>
+    </div>`;
+  } else if(t==="mass"){
+    basisInputs.innerHTML = `<div class="grid2">
+      <div><label class="small" for="basisMass">Known mass (g)</label><input id="basisMass" type="number" step="any" placeholder="e.g., 3.25"></div>
+    </div>`;
+  } else if(t==="solution"){
+    basisInputs.innerHTML = `<div class="grid2">
+      <div><label class="small" for="basisMolarity">Solution molarity (mol·L⁻¹)</label><input id="basisMolarity" type="number" step="any" placeholder="e.g., 0.100"></div>
+      <div><label class="small" for="basisVolumeL">Solution volume (L)</label><input id="basisVolumeL" type="number" step="any" placeholder="e.g., 0.250"></div>
+    </div>`;
+  } else if(t==="gasstp"){
+    basisInputs.innerHTML = `<div class="grid2">
+      <div><label class="small" for="basisGasVL">Gas volume at STP (L)</label><input id="basisGasVL" type="number" step="any" placeholder="e.g., 2.00"></div>
+      <div class="small dim" style="align-self:end">Uses 22.414 L·mol⁻¹</div>
+    </div>`;
+  }
+}
+
+basisType.addEventListener("change", renderBasisInputs);
+renderBasisInputs();
+
+balanceBtn.addEventListener("click", ()=>{
+  try{
+    status.textContent = "";
+    const eq = eqn.value.trim();
+    if(!eq){ status.textContent="Enter an equation."; return; }
+    const [L,R] = splitSides(eq);
+    const leftSpecs = splitSpecies(L);
+    const rightSpecs = splitSpecies(R);
+    const {A, elements, parsed, nLeft, speciesAll} = buildMatrix(leftSpecs, rightSpecs, includeCharge.checked);
+    const coeffs = nullspaceOneVector(A);
+    const pretty = formatEquation(leftSpecs, rightSpecs, coeffs);
+    resultDiv.dataset.plain = pretty;
+    resultDiv.innerHTML = formatEquationHTML(leftSpecs, rightSpecs, coeffs);
+    const {html} = makeElemTable(elements, parsed, coeffs, nLeft);
+    elemTableWrap.innerHTML = html;
+    checks.innerHTML = "<span class='ok'>Balanced ✔</span>";
+    lastParsed = {left:leftSpecs, right:rightSpecs, coeffs, parsed, speciesAll, nLeft};
+    populateSpeciesSelects(speciesAll);
+  }catch(err){
+    status.innerHTML = "<span class='bad'>"+err.message+"</span>";
+    resultDiv.textContent = "—"; delete resultDiv.dataset.plain;
+    elemTableWrap.innerHTML = "";
+    checks.innerHTML = "";
+    lastParsed = null;
+  }
+});
+
+clearBtn.addEventListener("click", ()=>{
+  eqn.value=""; resultDiv.textContent="Balanced equation will appear here."; delete resultDiv.dataset.plain; status.textContent=""; elemTableWrap.innerHTML=""; checks.innerHTML="";
+  lastParsed = null; stoichOut.innerHTML=""; yieldOut.textContent="";
+});
+
+copyBtn.addEventListener("click", async ()=>{
+  const txt = resultDiv.dataset.plain || resultDiv.textContent.trim();
+  if(!txt || txt==="Balanced equation will appear here.") return;
+  await navigator.clipboard.writeText(txt);
+  status.innerHTML = "<span class='ok'>Copied result to clipboard.</span>";
+});
+
+latexBtn.addEventListener("click", async ()=>{
+  const eq = eqn.value.trim();
+  if(!eq){ status.textContent="Enter an equation first."; return; }
+  const [L,R] = splitSides(eq);
+  const leftSpecs = splitSpecies(L);
+  const rightSpecs = splitSpecies(R);
+  try{
+    const {A} = buildMatrix(leftSpecs, rightSpecs, includeCharge.checked);
+    const coeffs = nullspaceOneVector(A);
+    const tex = toLatex(leftSpecs, rightSpecs, coeffs);
+    await navigator.clipboard.writeText("$$" + tex + "$$");
+    status.innerHTML = "<span class='ok'>LaTeX copied to clipboard.</span>";
+  }catch(err){
+    status.innerHTML = "<span class='bad'>"+err.message+"</span>";
+  }
+});
+
+document.querySelectorAll(".ex").forEach(btn=>{
+  btn.addEventListener("click", ()=>{ eqn.value = btn.dataset.equation || btn.textContent.trim(); eqn.focus(); });
+});
+eqn.addEventListener("keydown", event=>{ if(event.key==="Enter") balanceBtn.click(); });
+
+// ===== Stoichiometry calculations =====
+function speciesInfo(idx){
+  if(!lastParsed) throw new Error("Balance the equation first.");
+  const spLabel = lastParsed.speciesAll[idx];
+  const parsed = lastParsed.parsed[idx];
+  const mm = parsed.isElectron ? 0 : molarMassFromAtoms(parsed.atoms);
+  const coef = lastParsed.coeffs[idx];
+  return {label: spLabel, mm, coef, isElectron: parsed.isElectron};
+}
+
+function basisMoles(){
+  const type = basisType.value;
+  const idx = parseInt(basisSpecies.value,10);
+  const info = speciesInfo(idx);
+  if(info.isElectron) throw new Error("Electrons cannot be used as a material basis.");
+  if(type==="moles"){
+    const v = parseFloat(document.getElementById("basisMoles").value);
+    if(!(v>0)) throw new Error("Enter moles  0");
+    return v;
+  } else if(type==="mass"){
+    const m = parseFloat(document.getElementById("basisMass").value);
+    if(!(m>0)) throw new Error("Enter mass  0");
+    return m / info.mm;
+  } else if(type==="solution"){
+    const M = parseFloat(document.getElementById("basisMolarity").value);
+    const V = parseFloat(document.getElementById("basisVolumeL").value);
+    if(!(M>0 && V>0)) throw new Error("Enter M and V  0");
+    return M * V;
+  } else if(type==="gasstp"){
+    const VL = parseFloat(document.getElementById("basisGasVL").value);
+    if(!(VL>0)) throw new Error("Enter STP gas volume  0");
+    return VL / 22.414;
+  }
+  throw new Error("Unknown basis type");
+}
+
+function computeStoich(){
+  if(!lastParsed) throw new Error("Balance the equation first.");
+  const idxBasis = parseInt(basisSpecies.value,10);
+  const nBasis = basisMoles();
+  const coefBasis = lastParsed.coeffs[idxBasis];
+  const xi = nBasis / coefBasis;
+  const rows = [];
+  lastParsed.speciesAll.forEach((lbl, i)=>{
+    const parsed = lastParsed.parsed[i];
+    if(parsed.isElectron){ rows.push({label: lbl, coef:lastParsed.coeffs[i], mm:0, moles: 0, mass:0, role:"electron"}); return; }
+    const coef = lastParsed.coeffs[i];
+    const mm = molarMassFromAtoms(parsed.atoms);
+    const moles = xi * coef;
+    const mass = moles * mm;
+    rows.push({label: lbl, coef, mm, moles, mass, role: (i<lastParsed.nLeft ? "reactant":"product")});
+  });
+  return rows;
+}
+
+function renderStoichTable(rows){
+  // Build table with an assumed molarity control
+  function format(x, d=4){ return (isFinite(x)? x.toFixed(d): "—"); }
+  let control = `<div class="inline small" style="margin-bottom:8px">
+    <label class="dim" for="assumedMolarity">Assume solution molarity for volume conversion:</label>
+    <input id="assumedMolarity" type="number" step="any" value="1.000" style="width:120px"> <span class="dim">mol·L⁻¹</span>
+    <button id="recalcVolumes" class="ghost" style="padding:6px 10px">Recalculate volumes</button>
+  </div>`;
+
+  let tbody = "<table><tr><th>Species</th><th>Coeff</th><th>Molar mass (g·mol⁻¹)</th><th>Theoretical moles (mol)</th><th>Theoretical mass (g)</th><th>Solution volume @ M (L)</th><th>Gas volume @ STP (L)</th></tr>";
+  rows.forEach(r=>{
+    const VLstp = r.moles * 22.414;
+    tbody += `<tr>
+      <td>${chemHTML(r.label)}</td>
+      <td>${r.coef}</td>
+      <td>${r.mm ? format(r.mm,3) : "—"}</td>
+      <td>${format(r.moles)}</td>
+      <td>${r.mm ? format(r.mass,4) : "—"}</td>
+      <td class="volM">—</td>
+      <td>${format(VLstp,4)}</td>
+    </tr>`;
+  });
+  tbody += "</table>";
+  return control + tbody;
+}
+
+function fillSolutionVolumes(){
+  const input = document.getElementById("assumedMolarity");
+  if(!input) return;
+  const M = parseFloat(input.value);
+  const table = stoichOut.querySelector("table");
+  if(!table || !isFinite(M) || M<=0) return;
+  const rows = table.querySelectorAll("tr");
+  for(let i=1;i<rows.length;i++){
+    const tr = rows[i];
+    const molCell = tr.children[3];
+    const volMCell = tr.children[5];
+    const moles = parseFloat(molCell.textContent);
+    if(isFinite(moles) && moles>0){
+      volMCell.textContent = (moles / M).toFixed(4);
+    }else{
+      volMCell.textContent = "—";
+    }
+  }
+}
+
+calcStoich.addEventListener("click", ()=>{
+  try{
+    const rows = computeStoich();
+    lastStoich = rows;
+    stoichOut.innerHTML = renderStoichTable(rows);
+    document.getElementById("recalcVolumes").addEventListener("click", fillSolutionVolumes);
+    fillSolutionVolumes();
+    yieldOut.textContent="";
+  }catch(err){
+    stoichOut.innerHTML = "<span class='bad small'>"+err.message+"</span>";
+  }
+});
+clearStoich.addEventListener("click", ()=>{ stoichOut.innerHTML=""; yieldOut.textContent=""; lastStoich=null; });
+
+// ===== Yield calculation =====
+calcYield.addEventListener("click", ()=>{
+  try{
+    if(!lastStoich) throw new Error("Run stoichiometry calculation first.");
+    const idx = parseInt(yieldSpecies.value,10);
+    const type = yieldType.value;
+    const val = parseFloat(yieldValue.value);
+    if(!(val>0)) throw new Error("Enter an actual amount  0");
+    const theoRow = lastStoich[idx];
+    if(!theoRow) throw new Error("Invalid target species.");
+    let theo = 0, actual = 0;
+    if(type==="moles"){
+      theo = theoRow.moles;
+      actual = val;
+    }else{
+      theo = theoRow.mass;
+      actual = val;
+    }
+    if(!(theo>0)) throw new Error("Theoretical amount is zero or undefined (check basis selection).");
+    const pct = (actual/theo)*100;
+    yieldOut.innerHTML = `<span class="ok"><strong>% yield = ${pct.toFixed(2)}%</strong></span> <span class="dim">(actual / theoretical × 100)</span>`;
+  }catch(err){
+    yieldOut.innerHTML = "<span class='bad small'>"+err.message+"</span>";
+  }
+});
+
+// ===== Concentration helpers =====
+function mmFromFormulaOrThrow(){
+  const f = concFormula.value.trim();
+  if(!f){ throw new Error("Enter a chemical formula first."); }
+  const parsed = parseSpecies(f);
+  const mm = molarMassFromAtoms(parsed.atoms);
+  return mm;
+}
+function updateMM(){
+  try{
+    const mm = mmFromFormulaOrThrow();
+    concMMSpan.textContent = mm.toFixed(3);
+  }catch(e){
+    concMMSpan.textContent = "—";
+  }
+}
+concFormula.addEventListener("input", updateMM);
+updateMM();
+
+function toMassG(val, unit){
+  if(unit==="g") return val;
+  if(unit==="mg") return val/1000;
+  if(unit==="ug") return val/1e6;
+  return NaN;
+}
+function toVolL(val, unit){
+  if(unit==="L") return val;
+  if(unit==="mL") return val/1000;
+  return NaN;
+}
+function fmt(x, d=6){
+  return (isFinite(x) ? (+x).toFixed(d) : "—");
+}
+
+// A) From mass & volume
+concCalcA.addEventListener("click", ()=>{
+  try{
+    const mm = mmFromFormulaOrThrow();
+    const nEq = parseFloat(concEqPerMol.value);
+    if(!(nEq>0)) throw new Error("Enter n (equivalents per mole) > 0.");
+    const massIn = parseFloat(concMass.value);
+    const volIn = parseFloat(concVol.value);
+    if(!(massIn>0 && volIn>0)) throw new Error("Enter mass and volume > 0.");
+    const m_g = toMassG(massIn, concMassUnit.value);
+    const V_L = toVolL(volIn, concVolUnit.value);
+    const moles = m_g / mm;
+    const M = moles / V_L;          // molarity
+    const F = M;                     // formality (formula units per L) — numerically same for computation
+    const N = M * nEq;               // normality
+    const gL = m_g / V_L;
+    const mgL = gL * 1000;
+    const ugL = gL * 1e6;
+
+    concOutA.innerHTML = `
+      <table>
+        <tr><th>Quantity</th><th>Value</th></tr>
+        <tr><td>Molarity, M (mol·L⁻¹)</td><td><strong>${fmt(M,6)}</strong></td></tr>
+        <tr><td>Normality, N (eq·L⁻¹)</td><td>${fmt(N,6)} <span class="dim">(n × M, with n = ${fmt(nEq,3)})</span></td></tr>
+        <tr><td>Formality, F (formulas·L⁻¹)</td><td>${fmt(F,6)} <span class="dim">(using formula mass)</span></td></tr>
+        <tr><td>g/L</td><td>${fmt(gL,6)}</td></tr>
+        <tr><td>mg/L</td><td>${fmt(mgL,3)}</td></tr>
+        <tr><td>µg/L</td><td>${fmt(ugL,1)}</td></tr>
+      </table>
+      <div class="help">Normality depends on reaction context; for example, the equivalence factor is 2 when <span class="chem">H<sub>2</sub>SO<sub>4</sub></span> donates two <span class="chem">H<sup>+</sup></span> ions in an acid–base reaction.</div>
+    `;
+  }catch(err){
+    concOutA.innerHTML = "<span class='bad'>"+err.message+"</span>";
+  }
+});
+concClearA.addEventListener("click", ()=>{
+  concMass.value=""; concVol.value=""; concOutA.innerHTML="";
+});
+
+// B) From target concentration & volume → mass
+concCalcB.addEventListener("click", ()=>{
+  try{
+    const mm = mmFromFormulaOrThrow();
+    const nEq = parseFloat(concEqPerMol.value);
+    if(!(nEq>0)) throw new Error("Enter n (equivalents per mole) > 0.");
+    const type = concTypeB.value;
+    const c = parseFloat(concValB.value);
+    const V_in = parseFloat(concVolB.value);
+    if(!(c>0 && V_in>0)) throw new Error("Enter a target value and volume > 0.");
+    const V_L = toVolL(V_in, concVolBUnit.value);
+
+    let mass_g = NaN, moles = NaN, eqv = NaN;
+
+    if(type==="M"){ // molarity
+      moles = c * V_L;
+      mass_g = moles * mm;
+      eqv = moles * nEq;
+    }else if(type==="N"){ // normality
+      eqv = c * V_L;
+      moles = eqv / nEq;
+      mass_g = moles * mm;
+    }else if(type==="F"){ // formality (formula units per L)
+      const F = c;
+      moles = F * V_L;
+      mass_g = moles * mm;
+      eqv = moles * nEq;
+    }else if(type==="gL"){
+      mass_g = c * V_L;
+      moles = mass_g / mm;
+      eqv = moles * nEq;
+    }else if(type==="mgL"){
+      mass_g = (c/1000) * V_L;
+      moles = mass_g / mm;
+      eqv = moles * nEq;
+    }else if(type==="ugL"){
+      mass_g = (c/1e6) * V_L;
+      moles = mass_g / mm;
+      eqv = moles * nEq;
+    }
+
+    const gL = mass_g / V_L;
+    const mgL = gL * 1000;
+    const ugL = gL * 1e6;
+    const M = moles / V_L;
+    const N = M * nEq;
+    const F = M;
+
+    concOutB.innerHTML = `
+      <table>
+        <tr><th>To prepare</th><th>Value</th></tr>
+        <tr><td>Mass to weigh (g)</td><td><strong>${fmt(mass_g,6)}</strong></td></tr>
+        <tr><td>Moles (mol)</td><td>${fmt(moles,6)}</td></tr>
+        <tr><td>Equivalents (eq)</td><td>${fmt(eqv,6)}</td></tr>
+      </table>
+      <h4 style="margin-top:10px">Resulting concentrations (for the chosen volume)</h4>
+      <table>
+        <tr><th>Quantity</th><th>Value</th></tr>
+        <tr><td>M (mol·L⁻¹)</td><td>${fmt(M,6)}</td></tr>
+        <tr><td>N (eq·L⁻¹)</td><td>${fmt(N,6)}</td></tr>
+        <tr><td>F</td><td>${fmt(F,6)}</td></tr>
+        <tr><td>g/L</td><td>${fmt(gL,6)}</td></tr>
+        <tr><td>mg/L</td><td>${fmt(mgL,3)}</td></tr>
+        <tr><td>µg/L</td><td>${fmt(ugL,1)}</td></tr>
+      </table>
+    `;
+  }catch(err){
+    concOutB.innerHTML = "<span class='bad'>"+err.message+"</span>";
+  }
+});
+concClearB.addEventListener("click", ()=>{
+  concValB.value=""; concVolB.value=""; concOutB.innerHTML="";
+});
+
+// ===== RAM/RFM, empirical formula and combustion analysis =====
+function readPairs(text, firstLabel){
+  const rows=String(text).trim().split(/\n+/).filter(Boolean).map((line,index)=>{
+    const parts=line.split(/[,;:\s]+/).filter(Boolean);
+    if(parts.length!==2) throw new Error(`Line ${index+1}: enter ${firstLabel} and amount separated by a comma.`);
+    const amount=Number(parts[1]);
+    if(!Number.isFinite(amount)||amount<=0) throw new Error(`Line ${index+1}: amount must be greater than zero.`);
+    return [parts[0],amount];
+  });
+  if(!rows.length) throw new Error("Enter at least one data pair.");
+  return rows;
+}
+function ratioIntegers(values){
+  const smallest=Math.min(...values);
+  const ratios=values.map(v=>v/smallest);
+  let integers=null;
+  for(let factor=1;factor<=12;factor++){
+    const candidate=ratios.map(r=>Math.round(r*factor));
+    if(ratios.every((r,i)=>Math.abs(r*factor-candidate[i])<0.06)){ integers=candidate; break; }
+  }
+  if(!integers) throw new Error("The composition does not give a reliable small whole-number ratio. Check the data precision.");
+  const common=integers.reduce((a,b)=>gcd(a,b));
+  return integers.map(n=>n/common);
+}
+function plainFormula(elements,counts){ return elements.map((el,i)=>el+(counts[i]===1?"":counts[i])).join(""); }
+function formulaResult(rows,molarMass){
+  const elements=rows.map(r=>r[0]);
+  elements.forEach(el=>{ if(!ATOMIC_MASS[el]) throw new Error("Unknown element symbol: "+el); });
+  if(new Set(elements).size!==elements.length) throw new Error("Enter each element once.");
+  const moles=rows.map(([el,amount])=>amount/ATOMIC_MASS[el]);
+  const counts=ratioIntegers(moles);
+  const empirical=plainFormula(elements,counts);
+  const efMass=elements.reduce((sum,el,i)=>sum+ATOMIC_MASS[el]*counts[i],0);
+  let multiplier=null,molecular=null;
+  if(Number.isFinite(molarMass)&&molarMass>0){
+    multiplier=Math.round(molarMass/efMass);
+    if(multiplier<1||Math.abs(molarMass/efMass-multiplier)>0.08) throw new Error(`Molar mass is not a whole-number multiple of the empirical-formula mass (${fmt(efMass,4)} g/mol).`);
+    molecular=plainFormula(elements,counts.map(n=>n*multiplier));
+  }
+  return {elements,moles,counts,empirical,efMass,multiplier,molecular};
+}
+function compositionWorking(result,rows){
+  const smallest=Math.min(...result.moles);
+  let html=`<div class="math-steps"><div><span class="step-label">Step 1 - Convert each amount to moles</span>`;
+  result.elements.forEach((el,i)=>{html+=`<span class="math-step">n(${el}) = <span class="frac">${fmt(rows[i][1],6)} g ÷ ${fmt(ATOMIC_MASS[el],4)} g·mol<sup>−1</sup></span> = ${fmt(result.moles[i],6)} mol</span>`;});
+  html+=`</div><div><span class="step-label">Step 2 - Divide every mole value by the smallest</span>`;
+  result.elements.forEach((el,i)=>{html+=`<span class="math-step">${el}: ${fmt(result.moles[i],6)} ÷ ${fmt(smallest,6)} = ${(result.moles[i]/smallest).toFixed(3)} ≈ ${result.counts[i]}</span>`;});
+  html+=`</div><div><span class="step-label">Step 3 - Use the whole-number ratios as subscripts</span><span class="math-step">Empirical formula = ${chemHTML(result.empirical)}</span><span class="math-step">M<sub>empirical</sub> = ${result.elements.map((el,i)=>`${result.counts[i]}(${fmt(ATOMIC_MASS[el],4)})`).join(" + ")} = ${fmt(result.efMass,4)} g·mol<sup>−1</sup></span></div>`;
+  if(result.molecular) html+=`<div><span class="step-label">Step 4 - Determine the molecular formula</span><span class="math-step">Multiplier = M<sub>molecular</sub> ÷ M<sub>empirical</sub> = ${fmt(result.efMass*result.multiplier,4)} ÷ ${fmt(result.efMass,4)} = ${result.multiplier}</span><span class="math-step">Molecular formula = (${chemHTML(result.empirical)})<sub>${result.multiplier}</sub> = ${chemHTML(result.molecular)}</span></div>`;
+  return html+"</div>";
+}
+
+const ramData=document.getElementById("ramData"),ramOut=document.getElementById("ramOut");
+document.getElementById("ramBtn").addEventListener("click",()=>{try{
+  const rows=readPairs(ramData.value,"isotope mass").map(([m,a])=>[Number(m),a]);
+  if(rows.some(r=>!Number.isFinite(r[0])||r[0]<=0)) throw new Error("Every isotope mass must be greater than zero.");
+  const total=rows.reduce((s,r)=>s+r[1],0); if(Math.abs(total-100)>0.05) throw new Error(`Abundances total ${fmt(total,4)}%, not 100%.`);
+  const terms=rows.map(([m,a])=>m*a/100),ram=terms.reduce((a,b)=>a+b,0);
+  ramOut.innerHTML=`<div class="math-steps"><div><span class="step-label">Step 1 - Convert each percentage to a fraction</span>${rows.map(([m,a])=>`<span class="math-step">${a}% = ${a} ÷ 100 = ${fmt(a/100,5)}</span>`).join("")}</div><div><span class="step-label">Step 2 - Multiply each isotope mass by its fractional abundance</span>${rows.map(([m,a])=>`<span class="math-step">${m} × ${fmt(a/100,5)} = ${fmt(m*a/100,5)}</span>`).join("")}</div><div><span class="step-label">Step 3 - Add the weighted masses</span><span class="math-step">A<sub>r</sub> = Σ(m<sub>i</sub> × f<sub>i</sub>) = ${terms.map(v=>fmt(v,5)).join(" + ")} = <strong>${fmt(ram,5)}</strong></span></div></div>`;
+}catch(err){ramOut.innerHTML=`<span class='bad'>${escapeHTML(err.message)}</span>`;}});
+document.getElementById("ramClear").addEventListener("click",()=>{ramData.value="";ramOut.textContent="Enter isotope data.";});
+
+const rfmFormula=document.getElementById("rfmFormula"),rfmOut=document.getElementById("rfmOut");
+document.getElementById("rfmBtn").addEventListener("click",()=>{try{
+  const formula=rfmFormula.value.trim(); if(!formula) throw new Error("Enter a chemical formula.");
+  const atoms=parseSpecies(formula).atoms, mass=molarMassFromAtoms(atoms);
+  const entries=Object.entries(atoms);
+  const contributions=entries.map(([el,n])=>ATOMIC_MASS[el]*n);
+  rfmOut.innerHTML=`<div class="math-steps"><div><span class="step-label">Step 1 - Find each element's mass contribution</span>${entries.map(([el,n],i)=>`<span class="math-step">${el}: ${n} × ${fmt(ATOMIC_MASS[el],4)} = ${fmt(contributions[i],4)}</span>`).join("")}</div><div><span class="step-label">Step 2 - Add all contributions</span><span class="math-step">M<sub>r</sub>(${chemHTML(formula)}) = ${contributions.map(v=>fmt(v,4)).join(" + ")} = <strong>${fmt(mass,5)}</strong></span></div><div><span class="step-label">Step 3 - Calculate percentage composition</span>${entries.map(([el],i)=>`<span class="math-step">% ${el} = (${fmt(contributions[i],4)} ÷ ${fmt(mass,5)}) × 100 = ${fmt(contributions[i]/mass*100,4)}%</span>`).join("")}</div></div>`;
+}catch(err){rfmOut.innerHTML=`<span class='bad'>${escapeHTML(err.message)}</span>`;}});
+document.getElementById("rfmClear").addEventListener("click",()=>{rfmFormula.value="";rfmOut.textContent="Enter a formula.";});
+
+const moleFormula=document.getElementById("moleFormula"),moleMode=document.getElementById("moleMode"),moleValue=document.getElementById("moleValue"),moleUnit=document.getElementById("moleUnit"),moleView=document.getElementById("moleView"),moleSig=document.getElementById("moleSig"),moleOut=document.getElementById("moleOut");
+const AVOGADRO=6.02214076e23;
+function scientificHTML(value,significant=6){
+  if(!Number.isFinite(value))return "—";
+  if(value===0)return "0";
+  const [coefficient,exponent]=value.toExponential(Math.max(0,significant-1)).split("e");
+  return `${coefficient} × 10<sup>${Number(exponent)}</sup>`;
+}
+function decimalSignificant(value,significant){
+  if(!Number.isFinite(value))return "—";
+  if(value===0)return (0).toFixed(Math.max(0,significant-1));
+  const exponent=Math.floor(Math.log10(Math.abs(value)));
+  const places=Math.max(0,Math.min(100,significant-1-exponent));
+  return value.toFixed(places);
+}
+function moleNumberHTML(value){
+  const significant=Math.max(1,Math.min(12,Math.trunc(Number(moleSig.value)||4)));
+  moleSig.value=significant;
+  return moleView.value==="standard"?scientificHTML(value,significant):decimalSignificant(value,significant);
+}
+document.getElementById("moleBtn").addEventListener("click",()=>{try{
+  const formula=moleFormula.value.trim();if(!formula)throw new Error("Enter a chemical formula.");
+  const mm=molarMassFromAtoms(parseSpecies(formula).atoms),value=Number(moleValue.value),unit=moleUnit.value;
+  let massG=NaN,moles=NaN,particles=NaN,knownStep="";
+  if(moleMode.value!=="molarMass"&&(!Number.isFinite(value)||value<=0))throw new Error("Enter a known value greater than zero.");
+  if(moleMode.value==="moles"){
+    if(["g","mg","ug"].includes(unit)){
+      const factor={g:1,mg:1e-3,ug:1e-6}[unit];massG=value*factor;moles=massG/mm;
+      knownStep=`<span class="math-step">m = ${moleNumberHTML(value)} ${unit} × ${moleNumberHTML(factor)} g·${unit}<sup>−1</sup> = ${moleNumberHTML(massG)} g</span><span class="math-step">n = m ÷ M = ${moleNumberHTML(massG)} g ÷ ${moleNumberHTML(mm)} g·mol<sup>−1</sup> = ${moleNumberHTML(moles)} mol</span>`;
+    }else if(unit==="particles"){
+      particles=value;moles=particles/AVOGADRO;massG=moles*mm;
+      knownStep=`<span class="math-step">n = N ÷ N<sub>A</sub> = ${moleNumberHTML(particles)} particles ÷ (${moleNumberHTML(AVOGADRO)} particles·mol<sup>−1</sup>) = ${moleNumberHTML(moles)} mol</span>`;
+    }else throw new Error("To calculate moles, select g, mg, µg or particles as the known unit.");
+  }else if(moleMode.value==="mass"){
+    if(["mol","mmol","umol"].includes(unit)){
+      const factor={mol:1,mmol:1e-3,umol:1e-6}[unit];moles=value*factor;massG=moles*mm;
+      knownStep=`<span class="math-step">n = ${moleNumberHTML(value)} ${unit.replace("umol","µmol")} × ${moleNumberHTML(factor)} mol·${unit.replace("umol","µmol")}<sup>−1</sup> = ${moleNumberHTML(moles)} mol</span><span class="math-step">m = nM = ${moleNumberHTML(moles)} mol × ${moleNumberHTML(mm)} g·mol<sup>−1</sup> = ${moleNumberHTML(massG)} g</span>`;
+    }else if(unit==="particles"){
+      particles=value;moles=particles/AVOGADRO;massG=moles*mm;
+      knownStep=`<span class="math-step">n = N ÷ N<sub>A</sub> = ${moleNumberHTML(particles)} particles ÷ (${moleNumberHTML(AVOGADRO)} particles·mol<sup>−1</sup>) = ${moleNumberHTML(moles)} mol</span><span class="math-step">m = nM = ${moleNumberHTML(moles)} mol × ${moleNumberHTML(mm)} g·mol<sup>−1</sup> = ${moleNumberHTML(massG)} g</span>`;
+    }else throw new Error("To calculate mass, select mol, mmol, µmol or particles as the known unit.");
+  }else if(moleMode.value==="particles"){
+    if(["g","mg","ug"].includes(unit)){
+      const factor={g:1,mg:1e-3,ug:1e-6}[unit];massG=value*factor;moles=massG/mm;
+      knownStep=`<span class="math-step">m = ${moleNumberHTML(value)} ${unit} × ${moleNumberHTML(factor)} g·${unit}<sup>−1</sup> = ${moleNumberHTML(massG)} g</span><span class="math-step">n = m ÷ M = ${moleNumberHTML(massG)} g ÷ ${moleNumberHTML(mm)} g·mol<sup>−1</sup> = ${moleNumberHTML(moles)} mol</span>`;
+    }else if(["mol","mmol","umol"].includes(unit)){
+      const factor={mol:1,mmol:1e-3,umol:1e-6}[unit];moles=value*factor;massG=moles*mm;
+      knownStep=`<span class="math-step">n = ${moleNumberHTML(value)} ${unit.replace("umol","µmol")} × ${moleNumberHTML(factor)} mol·${unit.replace("umol","µmol")}<sup>−1</sup> = ${moleNumberHTML(moles)} mol</span>`;
+    }else throw new Error("To calculate particles, select a mass or mole unit as the known unit.");
+    particles=moles*AVOGADRO;
+    knownStep+=`<span class="math-step">N = nN<sub>A</sub> = ${moleNumberHTML(moles)} mol × ${moleNumberHTML(AVOGADRO)} particles·mol<sup>−1</sup> = <strong>${moleNumberHTML(particles)} particles</strong></span>`;
+  }
+  if(Number.isFinite(moles)&&!Number.isFinite(particles))particles=moles*AVOGADRO;
+  let html=`<div class="math-steps"><div><span class="step-label">Step 1 - Calculate molar mass</span><span class="math-step">M(${chemHTML(formula)}) = ${moleNumberHTML(mm)} g·mol<sup>−1</sup> = ${moleNumberHTML(mm)} mg·mmol<sup>−1</sup> = ${moleNumberHTML(mm)} µg·µmol<sup>−1</sup></span></div>`;
+  if(moleMode.value!=="molarMass")html+=`<div><span class="step-label">Step 2 - Apply the mass-mole-particle relationship</span>${knownStep}</div><div><span class="step-label">Step 3 - State and convert all related quantities</span><span class="math-step">m = ${moleNumberHTML(massG)} g = ${moleNumberHTML(massG*1000)} mg = ${moleNumberHTML(massG*1e6)} µg</span><span class="math-step">n = ${moleNumberHTML(moles)} mol = ${moleNumberHTML(moles*1000)} mmol = ${moleNumberHTML(moles*1e6)} µmol</span><span class="math-step">N = nN<sub>A</sub> = ${moleNumberHTML(particles)} particles</span><span class="math-step">N<sub>A</sub> = ${moleNumberHTML(AVOGADRO)} particles·mol<sup>−1</sup></span></div>`;
+  moleOut.innerHTML=html+"</div>";
+}catch(err){moleOut.innerHTML=`<span class='bad'>${escapeHTML(err.message)}</span>`;}});
+document.getElementById("moleClear").addEventListener("click",()=>{moleFormula.value="";moleValue.value="";moleOut.textContent="Enter a formula and known quantity.";});
+moleView.addEventListener("change",()=>{if(moleOut.querySelector(".math-steps"))document.getElementById("moleBtn").click();});
+moleSig.addEventListener("change",()=>{if(moleOut.querySelector(".math-steps"))document.getElementById("moleBtn").click();});
+
+const efData=document.getElementById("efData"),efMolar=document.getElementById("efMolar"),efOut=document.getElementById("efOut");
+document.getElementById("efBtn").addEventListener("click",()=>{try{const rows=readPairs(efData.value,"element symbol");const result=formulaResult(rows,Number(efMolar.value));efOut.innerHTML=compositionWorking(result,rows);}catch(err){efOut.innerHTML=`<span class='bad'>${escapeHTML(err.message)}</span>`;}});
+document.getElementById("efClear").addEventListener("click",()=>{efData.value="";efMolar.value="";efOut.textContent="Enter composition data.";});
+
+const combSample=document.getElementById("combSample"),combCO2=document.getElementById("combCO2"),combH2O=document.getElementById("combH2O"),combThird=document.getElementById("combThird"),combMolar=document.getElementById("combMolar"),combOut=document.getElementById("combOut");
+document.getElementById("combBtn").addEventListener("click",()=>{try{
+  const sample=Number(combSample.value),co2=Number(combCO2.value),water=Number(combH2O.value);
+  if(![sample,co2,water].every(v=>Number.isFinite(v)&&v>0)) throw new Error("Enter positive sample, CO₂ and H₂O masses.");
+  const massC=co2*ATOMIC_MASS.C/(ATOMIC_MASS.C+2*ATOMIC_MASS.O),massH=water*(2*ATOMIC_MASS.H)/(2*ATOMIC_MASS.H+ATOMIC_MASS.O),remainder=sample-massC-massH;
+  if(remainder < -0.001) throw new Error("Product masses imply more carbon and hydrogen than the original sample contains.");
+  const rows=[["C",massC],["H",massH]]; if(combThird.value!=="none"&&remainder>0.000001) rows.push([combThird.value,remainder]);
+  const result=formulaResult(rows,Number(combMolar.value));
+  combOut.innerHTML=`<div class="math-steps"><div><span class="step-label">Step 1 - Find the mass of carbon from carbon dioxide</span><span class="math-step">m(C) = ${fmt(co2,6)} g CO<sub>2</sub> × (12.011 g C ÷ 44.009 g CO<sub>2</sub>) = ${fmt(massC,6)} g C</span></div><div><span class="step-label">Step 2 - Find the mass of hydrogen from water</span><span class="math-step">m(H) = ${fmt(water,6)} g H<sub>2</sub>O × (2.016 g H ÷ 18.015 g H<sub>2</sub>O) = ${fmt(massH,6)} g H</span></div>${combThird.value!=="none"?`<div><span class="step-label">Step 3 - Find ${combThird.value} by difference</span><span class="math-step">m(${combThird.value}) = ${fmt(sample,6)} − (${fmt(massC,6)} + ${fmt(massH,6)}) = ${fmt(Math.max(0,remainder),6)} g</span></div>`:""}</div>`+compositionWorking(result,rows);
+}catch(err){combOut.innerHTML=`<span class='bad'>${escapeHTML(err.message)}</span>`;}});
+document.getElementById("combClear").addEventListener("click",()=>{[combSample,combCO2,combH2O,combMolar].forEach(x=>x.value="");combOut.textContent="Enter combustion data.";});
+
+// ===== Module navigation =====
+const moduleButtons = Array.from(document.querySelectorAll(".nav-btn[data-target]"));
+const modulePanels = Array.from(document.querySelectorAll(".panel[data-module]"));
+function showModule(target){
+  moduleButtons.forEach(btn=>{
+    const selected = btn.dataset.target===target;
+    btn.classList.toggle("active",selected);
+    btn.setAttribute("aria-current",selected?"page":"false");
+  });
+  modulePanels.forEach(panel=>panel.classList.toggle("active-module",panel.dataset.module===target));
+  const first = modulePanels.find(panel=>panel.dataset.module===target);
+  if(first && window.innerWidth<821){ window.scrollTo({top:document.querySelector(".app-shell").offsetTop,behavior:"smooth"}); }
+}
+moduleButtons.forEach(btn=>btn.addEventListener("click",()=>showModule(btn.dataset.target)));
+
+// ===== Standard form, significant figures and measurement tools =====
+const standardValue = document.getElementById("standardValue");
+const standardSf = document.getElementById("standardSf");
+const standardBtn = document.getElementById("standardBtn");
+const standardOut = document.getElementById("standardOut");
+const sigInput = document.getElementById("sigInput");
+const sigBtn = document.getElementById("sigBtn");
+const sigOut = document.getElementById("sigOut");
+const calcA = document.getElementById("calcA");
+const calcB = document.getElementById("calcB");
+const sigOperation = document.getElementById("sigOperation");
+const sigCalcBtn = document.getElementById("sigCalcBtn");
+const sigCalcOut = document.getElementById("sigCalcOut");
+const measurementsInput = document.getElementById("measurementsInput");
+const measurementUnit = document.getElementById("measurementUnit");
+const measureBtn = document.getElementById("measureBtn");
+const measureOut = document.getElementById("measureOut");
+
+function cleanNumericString(raw){ return String(raw).trim().replace(/,/g,"").replace(/[−–]/g,"-"); }
+function significantFigures(raw){
+  let text = cleanNumericString(raw);
+  if(!/^[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(text)) throw new Error("Enter a valid written number.");
+  text = text.replace(/^[+-]/,"").split(/e/i)[0];
+  const hasDecimal = text.includes(".");
+  const digits = text.replace(".","");
+  if(/^0+$/.test(digits)){
+    if(hasDecimal) return Math.max(1,(text.split(".")[1]||"").length);
+    return 1;
+  }
+  let significant = digits.replace(/^0+/,"");
+  if(!hasDecimal) significant = significant.replace(/0+$/,"");
+  return significant.length;
+}
+function decimalPlaces(raw){
+  const text = cleanNumericString(raw).toLowerCase();
+  if(!/^[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/.test(text)) throw new Error("Enter valid numbers.");
+  const parts = text.split("e");
+  const fractionLength = (parts[0].split(".")[1]||"").length;
+  const exponent = parts[1] ? parseInt(parts[1],10) : 0;
+  return fractionLength-exponent;
+}
+function roundToDecimalPlaces(value,places){
+  if(places>=0) return value.toFixed(Math.min(places,12));
+  const factor = 10**(-places);
+  return String(Math.round((value+Number.EPSILON)/factor)*factor);
+}
+function standardFormHTML(value,sf){
+  if(value===0) return `<span class="math-display">0</span>`;
+  const exponent = Math.floor(Math.log10(Math.abs(value)));
+  let coefficient = value/(10**exponent);
+  coefficient = Number(coefficient.toPrecision(sf));
+  if(Math.abs(coefficient)>=10){ coefficient/=10; return `<span class="math-display">${coefficient.toPrecision(sf)} × 10<sup>${exponent+1}</sup></span>`; }
+  const coefficientText = coefficient.toFixed(Math.max(0,sf-1));
+  return `<span class="math-display">${coefficientText} × 10<sup>${String(exponent).replace("-","−")}</sup></span>`;
+}
+function roundToSig(value,sf){
+  if(value===0) return "0";
+  const rounded = Number(value.toPrecision(sf));
+  const exponent = Math.floor(Math.log10(Math.abs(rounded)));
+  const decimals = Math.max(0,sf-exponent-1);
+  if(exponent>=6 || exponent<=-4){
+    const [coefficient,power] = rounded.toExponential(sf-1).split("e");
+    const superscriptPower = [...String(Number(power))].map(ch=>SUPERSCRIPT_CHARS[ch]||ch).join("");
+    return `${coefficient} × 10${superscriptPower}`;
+  }
+  return rounded.toFixed(Math.min(decimals,12));
+}
+
+standardBtn.addEventListener("click",()=>{
+  try{
+    const value = Number(cleanNumericString(standardValue.value));
+    const sf = parseInt(standardSf.value,10);
+    if(!Number.isFinite(value)) throw new Error("Enter a valid numerical value.");
+    if(!(sf>=1&&sf<=12)) throw new Error("Choose between 1 and 12 significant figures.");
+    const rounded = roundToSig(value,sf);
+    standardOut.innerHTML = `${standardFormHTML(value,sf)}<div class="help">Rounded decimal: <strong>${escapeHTML(rounded)}</strong> (${sf} significant figure${sf===1?"":"s"})</div>`;
+  }catch(err){ standardOut.innerHTML=`<span class="bad">${escapeHTML(err.message)}</span>`; }
+});
+
+sigBtn.addEventListener("click",()=>{
+  try{
+    const count = significantFigures(sigInput.value);
+    sigOut.innerHTML = `<strong>${escapeHTML(sigInput.value.trim())}</strong> contains <strong>${count}</strong> significant figure${count===1?"":"s"}.`;
+  }catch(err){ sigOut.innerHTML=`<span class="bad">${escapeHTML(err.message)}</span>`; }
+});
+
+sigCalcBtn.addEventListener("click",()=>{
+  try{
+    const rawA = cleanNumericString(calcA.value), rawB = cleanNumericString(calcB.value);
+    const a = Number(rawA), b = Number(rawB);
+    if(!Number.isFinite(a)||!Number.isFinite(b)) throw new Error("Enter both numerical values.");
+    const operation = sigOperation.value;
+    let result,reported,rule;
+    if(operation==="add"||operation==="subtract"){
+      result = operation==="add" ? a+b : a-b;
+      const places = Math.min(decimalPlaces(rawA),decimalPlaces(rawB));
+      reported = roundToDecimalPlaces(result,places);
+      rule = `least decimal-place precision (${places>=0?places+" decimal place"+(places===1?"":"s"):`10^${-places} place`})`;
+    }else{
+      if(operation==="divide"&&b===0) throw new Error("Division by zero is not defined.");
+      result = operation==="multiply" ? a*b : a/b;
+      const sf = Math.min(significantFigures(rawA),significantFigures(rawB));
+      reported = roundToSig(result,sf);
+      rule = `${sf} significant figure${sf===1?"":"s"}`;
+    }
+    sigCalcOut.innerHTML = `<strong>Unrounded:</strong> ${escapeHTML(String(result))}<br><strong>Reported result:</strong> ${escapeHTML(reported)}<div class="help">Limited by the ${escapeHTML(rule)}.</div>`;
+  }catch(err){ sigCalcOut.innerHTML=`<span class="bad">${escapeHTML(err.message)}</span>`; }
+});
+
+measureBtn.addEventListener("click",()=>{
+  try{
+    const values = measurementsInput.value.trim().split(/[\s,;]+/).filter(Boolean).map(cleanNumericString).map(Number);
+    if(values.length<2||values.some(v=>!Number.isFinite(v))) throw new Error("Enter at least two valid replicate measurements.");
+    const mean = values.reduce((a,b)=>a+b,0)/values.length;
+    const minimum = Math.min(...values), maximum=Math.max(...values);
+    const range = maximum-minimum, uncertainty=range/2;
+    const variance = values.reduce((sum,v)=>sum+(v-mean)**2,0)/(values.length-1);
+    const sd = Math.sqrt(variance);
+    const relative = mean===0 ? NaN : Math.abs(uncertainty/mean)*100;
+    const rawDecimals = measurementsInput.value.split(/[\s,;]+/).filter(Boolean).map(v=>Math.max(0,decimalPlaces(v)));
+    const measuredPlaces = Math.max(...rawDecimals);
+    const uncertaintyOrder = uncertainty>0 ? Math.floor(Math.log10(uncertainty)) : -measuredPlaces;
+    const reportPlaces = uncertainty>0 ? Math.max(0,-uncertaintyOrder) : measuredPlaces;
+    const unit = escapeHTML(measurementUnit.value.trim());
+    measureOut.innerHTML = `
+      <strong>Reported measurement:</strong> <span class="chem">(${mean.toFixed(reportPlaces)} ± ${uncertainty.toFixed(reportPlaces)}) ${unit}</span>
+      <div class="table-wrap" style="margin-top:10px"><table><tr><th>Count</th><th>Mean</th><th>Range</th><th>Half-range</th><th>Relative uncertainty</th><th>Sample s.d.</th></tr>
+      <tr><td>${values.length}</td><td>${mean.toFixed(measuredPlaces)} ${unit}</td><td>${range.toFixed(measuredPlaces)} ${unit}</td><td>${uncertainty.toFixed(measuredPlaces)} ${unit}</td><td>${Number.isFinite(relative)?relative.toFixed(2)+"%":"—"}</td><td>${sd.toFixed(measuredPlaces)} ${unit}</td></tr></table></div>`;
+  }catch(err){ measureOut.innerHTML=`<span class="bad">${escapeHTML(err.message)}</span>`; }
+});
+
+// preload an example
+eqn.value="Fe2(SO4)3 + KOH -> K2SO4 + Fe(OH)3";
+concFormula.value = "Na2CO3·10H2O";
+updateMM();
+</script>
+</body>
+</html>
