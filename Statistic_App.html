@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Statistics Simulator | Mulungushi University SNAS</title>
+<meta name="description" content="An offline undergraduate statistics simulator with worked calculations for descriptive statistics, t-tests, F-tests, Dixon's Q and one-way ANOVA.">
+<style>
+  :root{
+    --canvas:#edf3f8;
+    --surface:#ffffff;
+    --surface-soft:#f7fafc;
+    --ink:#102238;
+    --muted:#5e7086;
+    --line:#d6e1ec;
+    --navy:#073b68;
+    --blue:#0767b9;
+    --sky:#eaf5ff;
+    --teal:#087d71;
+    --teal-soft:#e8f7f3;
+    --amber:#9a5c00;
+    --amber-soft:#fff5df;
+    --red:#b5262e;
+    --red-soft:#fff0f1;
+    --shadow:0 12px 28px rgba(23,53,80,.10);
+    --radius:16px;
+    --results-pad:clamp(18px,2vw,32px);
+  }
+  *{box-sizing:border-box}
+  html,body{min-height:100%;margin:0}
+  body{background:var(--canvas);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:15px;line-height:1.45}
+  button,input,select,textarea{font:inherit}
+  button{cursor:pointer}
+  button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid rgba(7,103,185,.30);outline-offset:2px}
+  .app-shell{height:100dvh;min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr);overflow:hidden}
+  .topbar{min-height:84px;padding:15px clamp(18px,3vw,48px);background:linear-gradient(100deg,#062d4d 0%,#074b7a 54%,#0c699b 100%);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:20px;box-shadow:0 2px 12px rgba(9,39,68,.18);position:relative;z-index:2}
+  .brand{display:flex;align-items:center;gap:13px;min-width:0}
+  .brand-mark{width:43px;height:43px;border:1px solid rgba(255,255,255,.43);border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.12);font-family:Georgia,serif;font-size:25px;font-weight:700;flex:0 0 auto}
+  .brand h1{font-size:clamp(18px,1.55vw,24px);line-height:1.12;margin:0;font-weight:760;letter-spacing:-.02em}
+  .brand p{margin:3px 0 0;font-size:12px;color:rgba(255,255,255,.78)}
+  .top-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap;justify-content:flex-end}
+  .mode-note{font-size:12px;color:#dceefa;white-space:nowrap}
+  .presentation-toggle{width:auto;border:1px solid rgba(255,255,255,.45);color:#fff;background:rgba(255,255,255,.12);padding:9px 13px;border-radius:9px;font-weight:700;font-size:13px}
+  .presentation-toggle[aria-pressed="true"]{background:#fff;color:var(--navy)}
+  .workspace{min-height:0;height:100%;overflow:hidden;display:grid;grid-template-columns:minmax(335px,430px) minmax(0,1fr);gap:0;max-width:none;width:100%}
+  .control-pane{height:100%;background:#f4f8fb;border-right:1px solid var(--line);padding:18px;overflow-y:auto;overscroll-behavior:contain;min-height:0}
+  .results-pane{height:100%;min-width:0;min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr);overflow:hidden;background:var(--canvas)}
+  .results-content-scroll{min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:var(--results-pad)}
+  .section-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 3px 10px rgba(32,67,98,.045);margin-bottom:15px;overflow:hidden}
+  .section-card:last-child{margin-bottom:0}
+  .section-heading{display:flex;align-items:flex-start;gap:10px;padding:14px 15px 11px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fff,#f9fbfd)}
+  .section-index{display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--sky);color:var(--blue);font-size:12px;font-weight:800;flex:0 0 auto}
+  .section-heading h2{font-size:15px;line-height:1.25;margin:2px 0 0;letter-spacing:-.01em}
+  .section-body{padding:14px 15px 15px}
+  .helper{font-size:12.5px;color:var(--muted);margin:0 0 11px;line-height:1.48}
+  .form-grid{display:grid;gap:11px}
+  .form-grid.two{grid-template-columns:1fr 1fr}
+  label{display:block;font-size:12px;font-weight:760;color:#40556c;margin:0 0 5px}
+  label .optional{font-weight:500;color:#7b8da1}
+  textarea,input,select{display:block;width:100%;background:#fff;color:var(--ink);border:1px solid #c8d6e3;border-radius:9px;box-shadow:inset 0 1px 1px rgba(17,46,71,.03)}
+  textarea{min-height:70px;resize:vertical;padding:9px 10px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:13px;line-height:1.45}
+  input,select{height:39px;padding:8px 10px}
+  .input-group{display:grid;gap:5px}
+  .button-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:11px}
+  .button-grid.three{grid-template-columns:1fr 1fr 1fr}
+  .btn{min-height:39px;border:1px solid transparent;border-radius:9px;padding:9px 10px;font-size:13px;font-weight:760;line-height:1.15;transition:filter .15s ease,transform .15s ease}
+  .btn:hover{filter:brightness(.96)}
+  .btn:active{transform:translateY(1px)}
+  .btn-primary{background:var(--blue);color:#fff;box-shadow:0 2px 5px rgba(7,103,185,.22)}
+  .btn-teal{background:var(--teal);color:#fff}
+  .btn-secondary{background:#eaf0f6;color:#18324b;border-color:#d4e0eb}
+  .btn-outline{background:#fff;color:var(--blue);border-color:#acc9e2}
+  .analysis-guide{margin-top:10px;padding:10px;border-radius:10px;background:var(--sky);border:1px solid #cfe4f7;color:#34526e;font-size:12px}
+  .analysis-guide strong{color:#174c74}
+  .formula-reference summary{list-style:none;cursor:pointer;padding:14px 15px;display:flex;align-items:center;justify-content:space-between;font-weight:780;font-size:14px;color:#244660}
+  .formula-reference summary::-webkit-details-marker{display:none}
+  .formula-reference summary::after{content:"+";font-size:20px;font-weight:400;color:var(--blue);line-height:1}
+  .formula-reference[open] summary{border-bottom:1px solid var(--line)}
+  .formula-reference[open] summary::after{content:"−"}
+  .formula-list{padding:8px 15px 14px}
+  .formula-item{padding:10px 0;border-bottom:1px dashed #dbe5ee}
+  .formula-item:last-child{border-bottom:0}
+  .formula-label{font-size:11px;text-transform:uppercase;letter-spacing:.065em;font-weight:800;color:#58718a;margin-bottom:5px}
+  .math{font-family:"Cambria Math",Cambria,"Times New Roman",serif;color:#132a43;font-size:16px;line-height:1.5;white-space:normal}
+  .math var{font-style:italic}
+  .math sub,.math sup{font-size:.68em;line-height:0}
+  .frac{display:inline-grid;vertical-align:middle;grid-template-rows:auto auto;text-align:center;line-height:1.04;margin:0 .15em;min-width:1.25em}
+  .frac>span:first-child{border-bottom:1.4px solid currentColor;padding:0 .16em .10em}
+  .frac>span:last-child{padding:.10em .16em 0}
+  .sqrt{display:inline-flex;align-items:flex-start;vertical-align:middle;margin:0 .04em}.sqrt::before{content:"√";font-size:1.34em;line-height:.94}.sqrt>span{border-top:1.4px solid currentColor;padding:.03em .1em 0}
+  .formula-caption{font-size:11.5px;color:var(--muted);margin-top:4px}
+  .pane-head{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;padding:var(--results-pad) var(--results-pad) 14px;background:var(--canvas);border-bottom:1px solid var(--line)}
+  .eyebrow{font-size:11px;font-weight:850;letter-spacing:.10em;text-transform:uppercase;color:var(--blue);margin:0 0 4px}
+  .pane-head h2{font-size:clamp(21px,2vw,29px);letter-spacing:-.03em;line-height:1.12;margin:0;color:#102a45}
+  .status-pill{display:flex;align-items:center;gap:7px;margin-top:3px;white-space:nowrap;border:1px solid #b9ddcf;background:var(--teal-soft);color:#17675c;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:760}
+  .status-dot{width:7px;height:7px;border-radius:50%;background:#0c9b87}
+  .welcome{border:1px dashed #b8cce0;background:rgba(255,255,255,.75);border-radius:var(--radius);padding:clamp(22px,4vw,50px);display:grid;place-items:center;text-align:center;min-height:calc(100dvh - 195px)}
+  .welcome-icon{width:56px;height:56px;border-radius:16px;display:grid;place-items:center;background:var(--sky);color:var(--blue);font-family:Georgia,serif;font-size:31px;font-weight:700;margin-bottom:12px}
+  .welcome h3{font-size:20px;margin:0 0 6px;color:#1a3854}.welcome p{max-width:510px;color:var(--muted);margin:0;font-size:14px}
+  .solution-output{display:none}.solution-output.visible{display:block}
+  .result-banner{background:linear-gradient(105deg,#0d4f7d,#0874a9);color:#fff;border-radius:var(--radius);padding:18px 19px;margin-bottom:15px;box-shadow:var(--shadow)}
+  .result-banner .banner-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:5px}.result-banner h3{font-size:18px;margin:0;letter-spacing:-.015em}.result-banner p{margin:0;color:#dcedf8;font-size:13px}.result-tag{border:1px solid rgba(255,255,255,.45);border-radius:999px;padding:4px 8px;font-size:11px;font-weight:760;white-space:nowrap}
+  .summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin:0 0 15px}
+  .metric{background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px;min-width:0}.metric-label{font-size:10.5px;text-transform:uppercase;letter-spacing:.065em;color:#62778d;font-weight:820;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.metric-value{font-size:20px;font-weight:780;letter-spacing:-.025em;color:#153958;margin-top:2px;overflow:hidden;text-overflow:ellipsis}.metric-note{font-size:11px;color:#72869a;margin-top:2px}
+  .solution-grid{display:grid;grid-template-columns:minmax(330px,1.1fr) minmax(320px,.9fr);gap:15px;align-items:start}
+  .result-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 4px 14px rgba(32,67,98,.05);overflow:hidden}.result-card>h3{font-size:15px;margin:0;padding:14px 16px;border-bottom:1px solid var(--line);color:#1d405d;background:#fbfdff}.result-card-body{padding:15px}
+  .worked-step{border-left:3px solid #bbd9ee;padding:0 0 16px 16px;position:relative}.worked-step:last-child{padding-bottom:0}.worked-step::before{content:"";position:absolute;width:9px;height:9px;border-radius:50%;background:var(--blue);left:-6px;top:4px;border:2px solid #fff;box-shadow:0 0 0 1px #93c4e8}.step-title{font-size:12px;text-transform:uppercase;letter-spacing:.08em;font-weight:820;color:#37698f;margin:0 0 7px}.step-explanation{font-size:13px;color:#516a80;margin:0 0 7px}.calculation{background:#f6faff;border:1px solid #dcebf7;border-radius:9px;padding:9px 11px;margin:5px 0 0;overflow-x:auto}.calculation .math{font-size:16px;min-width:max-content}.result-line{display:inline-block;margin-top:7px;background:var(--teal-soft);border:1px solid #b8e3d8;border-radius:7px;color:#075f55;padding:5px 8px;font-weight:800;font-size:13px}.decision{margin-top:12px;padding:12px 13px;border-radius:10px;font-size:13px;font-weight:700}.decision.accept{background:var(--teal-soft);border:1px solid #b9e1d6;color:#116b5f}.decision.reject{background:var(--red-soft);border:1px solid #f2bec2;color:#99262c}.decision.neutral{background:var(--amber-soft);border:1px solid #f0d293;color:#855209}
+  .data-box{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px;background:#f7fafc;border:1px solid var(--line);border-radius:8px;padding:9px;line-height:1.55;word-break:break-word;color:#38536e}
+  .table-wrap{overflow-x:auto}.data-table{width:100%;border-collapse:collapse;font-size:13px}.data-table th,.data-table td{border-bottom:1px solid var(--line);padding:9px 8px;text-align:left;white-space:nowrap}.data-table th{font-size:11px;text-transform:uppercase;letter-spacing:.045em;color:#587087;background:#f5f9fc}.data-table td{color:#24415b}.data-table tr:last-child td{border-bottom:0}.empty-table{font-size:13px;color:var(--muted);padding:3px 0}
+  .course-note{font-size:11.5px;color:#647a91;margin:12px 0 0}.course-note strong{color:#3b5d78}
+  .app-footer{font-size:11px;color:#73889b;padding-top:13px;text-align:right}
+  body.presentation .topbar{min-height:96px}body.presentation{font-size:17px;--results-pad:32px}body.presentation .control-pane{padding:21px}.presentation .section-card{border-radius:14px}.presentation textarea{min-height:84px;font-size:15px}.presentation .btn{min-height:45px;font-size:14px}.presentation .helper,.presentation .analysis-guide{font-size:13.5px}.presentation .math{font-size:19px}.presentation .calculation .math{font-size:20px}.presentation .worked-step{padding-bottom:20px}.presentation .step-explanation,.presentation .decision{font-size:15px}.presentation .data-table{font-size:14px}.presentation .metric-value{font-size:24px}
+  @media (max-width:900px){.app-shell{height:auto;min-height:100dvh;overflow:visible}.workspace{height:auto;overflow:visible;grid-template-columns:1fr;min-height:auto}.control-pane,.results-pane{height:auto;overflow:visible}.results-pane{display:block}.results-content-scroll{overflow:visible;padding:18px 14px}.control-pane{border-right:0;border-bottom:1px solid var(--line);padding:14px}.pane-head{padding:18px 14px 13px}.welcome{min-height:270px}.solution-grid{grid-template-columns:1fr}.summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.topbar{min-height:71px;padding:12px 14px}.mode-note{display:none}.brand-mark{width:37px;height:37px;border-radius:10px;font-size:22px}.brand p{font-size:10.5px}.presentation-toggle{padding:8px 10px;font-size:12px}.pane-head h2{font-size:23px}}
+  @media (max-width:440px){.topbar{align-items:center}.brand{gap:9px}.brand h1{font-size:16px}.brand p{display:none}.top-actions{gap:6px}.presentation-toggle{font-size:11px;padding:8px}.form-grid.two{grid-template-columns:1fr}.button-grid.three{grid-template-columns:1fr}.section-heading{padding:12px}.section-body{padding:12px}.pane-head{margin-bottom:13px}.result-banner{padding:15px}.metric{padding:11px}.metric-value{font-size:18px}.calculation{padding:8px}.calculation .math,.math{font-size:15px}}
+  @media print{body{background:#fff}.topbar{background:#fff;color:#102238;box-shadow:none;border-bottom:1px solid #ddd}.brand p,.mode-note,.top-actions,.control-pane,.app-footer{display:none}.workspace{display:block}.results-pane{display:block;height:auto;overflow:visible}.results-content-scroll{overflow:visible;padding:18px}.welcome{display:none!important}.solution-output{display:block!important}.result-card,.metric{box-shadow:none;break-inside:avoid}}
+</style>
+</head>
+<body>
+<main class="app-shell">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">Σ</div>
+      <div><h1>Statistics Learning Simulator</h1><p>Mulungushi University · School of Natural and Applied Sciences</p></div>
+    </div>
+    <div class="top-actions"><span class="mode-note">High-contrast teaching display</span><button id="presentationBtn" class="presentation-toggle" type="button" aria-pressed="false">Presentation mode</button></div>
+  </header>
+
+  <div class="workspace">
+    <aside class="control-pane" aria-label="Simulator controls">
+      <section class="section-card">
+        <div class="section-heading"><span class="section-index">01</span><h2>Enter your data</h2></div>
+        <div class="section-body">
+          <p class="helper">Enter numbers separated by spaces, commas, or new lines. Group B and C are required only for analyses that compare groups.</p>
+          <div class="form-grid">
+            <div class="input-group"><label for="inputA">Group A</label><textarea id="inputA" spellcheck="false" placeholder="Example: 12 13 15 12 14"></textarea></div>
+            <div class="input-group"><label for="inputB">Group B <span class="optional">(when required)</span></label><textarea id="inputB" spellcheck="false" placeholder="Example: 11 10 14 12 13"></textarea></div>
+            <div class="input-group"><label for="inputC">Group C <span class="optional">(for ANOVA)</span></label><textarea id="inputC" spellcheck="false" placeholder="Example: 9 11 13 12 8"></textarea></div>
+          </div>
+          <div class="button-grid"><button id="splitBtn" class="btn btn-outline" type="button">Split data block</button><button id="clearBtn" class="btn btn-secondary" type="button">Clear data</button></div>
+        </div>
+      </section>
+
+      <section class="section-card">
+        <div class="section-heading"><span class="section-index">02</span><h2>Select an analysis</h2></div>
+        <div class="section-body">
+          <div class="form-grid">
+            <div class="input-group"><label for="testSelect">Statistical method</label><select id="testSelect">
+              <option value="descriptive">Descriptive statistics and confidence limits</option>
+              <option value="oneSampleT">One-sample t-test</option>
+              <option value="twoSampleT">Two-sample t-test (pooled variance)</option>
+              <option value="pairedT">Paired t-test</option>
+              <option value="ftest">F-test for two variances</option>
+              <option value="anova1">One-way ANOVA</option>
+              <option value="qtest">Dixon's Q-test for an outlier</option>
+            </select></div>
+            <div class="form-grid two">
+              <div class="input-group"><label for="alphaSelect">Significance level</label><select id="alphaSelect"><option value="0.05">α = 0.05 (95%)</option><option value="0.10">α = 0.10 (90%)</option><option value="0.01">α = 0.01 (99%)</option></select></div>
+              <div class="input-group"><label for="tailSelect">Test direction</label><select id="tailSelect"><option value="two">Two-tailed</option><option value="less">One-tailed: less than</option><option value="greater">One-tailed: greater than</option></select></div>
+            </div>
+            <div id="mu0Wrap" class="input-group"><label for="mu0">Hypothesised mean, μ<sub>0</sub> <span class="optional">(one-sample t only)</span></label><input id="mu0" type="number" step="any" inputmode="decimal" placeholder="e.g. 12.5"></div>
+          </div>
+          <div id="analysisGuide" class="analysis-guide"><strong>Ready:</strong> select a method and calculate. The solution panel will show the formula, substitution, and conclusion.</div>
+          <div class="button-grid"><button id="runBtn" class="btn btn-primary" type="button">Calculate solution</button><button id="demoBtn" class="btn btn-teal" type="button">Load sample data</button></div>
+        </div>
+      </section>
+
+      <section class="section-card">
+        <div class="section-heading"><span class="section-index">03</span><h2>Save your result</h2></div>
+        <div class="section-body"><div class="button-grid"><button id="copyBtn" class="btn btn-outline" type="button">Copy result text</button><button id="downloadBtn" class="btn btn-secondary" type="button">Download .txt</button></div></div>
+      </section>
+
+    </aside>
+
+    <section class="results-pane" aria-live="polite">
+      <div class="pane-head"><div><p class="eyebrow">Worked calculation area</p><h2>See every calculation, not only the answer</h2></div><div class="status-pill"><span class="status-dot"></span>Offline simulator</div></div>
+      <div class="results-content-scroll">
+      <details class="section-card formula-reference">
+        <summary role="button">View formula reference</summary>
+        <div class="formula-list">
+          <div class="formula-item"><div class="formula-label">Mean</div><div class="math"><var>x̄</var> = <span class="frac"><span>Σ<var>x</var><sub>i</sub></span><span><var>n</var></span></span></div></div>
+          <div class="formula-item"><div class="formula-label">Standard deviation</div><div class="math"><var>s</var> = <span class="sqrt"><span><span class="frac"><span>Σ(<var>x</var><sub>i</sub> − <var>x̄</var>)<sup>2</sup></span><span><var>n</var> − 1</span></span></span></span></div></div>
+          <div class="formula-item"><div class="formula-label">Relative standard deviation / coefficient of variation</div><div class="math">RSD / CV = <span class="frac"><span><var>s</var></span><span><var>x̄</var></span></span> × 100</div></div>
+          <div class="formula-item"><div class="formula-label">Confidence limits</div><div class="math">CL = <var>x̄</var> ± <span class="frac"><span><var>t</var><var>s</var></span><span>√<var>n</var></span></span></div></div>
+          <div class="formula-item"><div class="formula-label">Pooled standard deviation</div><div class="math"><var>s</var><sub>pooled</sub> = <span class="sqrt"><span><span class="frac"><span><var>s</var><sub>1</sub><sup>2</sup>(<var>n</var><sub>1</sub>−1)+<var>s</var><sub>2</sub><sup>2</sup>(<var>n</var><sub>2</sub>−1)</span><span><var>n</var><sub>1</sub>+<var>n</var><sub>2</sub>−2</span></span></span></span></div></div>
+          <div class="formula-item"><div class="formula-label">Two-sample t-test</div><div class="math"><var>t</var><sub>calc</sub> = <span class="frac"><span>|<var>x̄</var><sub>1</sub> − <var>x̄</var><sub>2</sub>|</span><span><var>s</var><sub>pooled</sub></span></span> <span class="sqrt"><span><span class="frac"><span><var>n</var><sub>1</sub><var>n</var><sub>2</sub></span><span><var>n</var><sub>1</sub>+<var>n</var><sub>2</sub></span></span></span></span></div></div>
+          <div class="formula-item"><div class="formula-label">F-test</div><div class="math"><var>F</var><sub>calc</sub> = <span class="frac"><span><var>s</var><sub>1</sub><sup>2</sup></span><span><var>s</var><sub>2</sub><sup>2</sup></span></span></div></div>
+          <div class="formula-item"><div class="formula-label">Dixon's Q-test</div><div class="math"><var>Q</var><sub>exp</sub> = <span class="frac"><span>|suspect value − nearest value|</span><span>largest value − smallest value</span></span></div></div>
+          <div class="formula-item"><div class="formula-label">Regression reference</div><div class="math"><var>m</var> = <span class="frac"><span>Σ<var>x</var><sub>i</sub><var>y</var><sub>i</sub> − <span class="frac"><span>(Σ<var>x</var><sub>i</sub>)(Σ<var>y</var><sub>i</sub>)</span><span><var>n</var></span></span></span><span>Σ<var>x</var><sub>i</sub><sup>2</sup> − <span class="frac"><span>(Σ<var>x</var><sub>i</sub>)<sup>2</sup></span><span><var>n</var></span></span></span></span>, &nbsp; <var>b</var> = <var>ȳ</var> − <var>m</var><var>x̄</var></div><div class="formula-caption">Included from the supplied formula table for reference.</div></div>
+        </div>
+      </details>
+      <div id="welcome" class="welcome"><div><div class="welcome-icon">∑</div><h3>Start with your data</h3><p>Choose an analysis in the left panel, then calculate. The right panel will give an undergraduate-level, step-by-step solution using the supplied statistical formula table.</p></div></div>
+      <div id="solutionOutput" class="solution-output">
+        <div id="resultBanner"></div>
+        <div id="summaryGrid" class="summary-grid"></div>
+        <div class="solution-grid">
+          <section class="result-card"><h3>Worked solution</h3><div id="workedSolution" class="result-card-body"></div></section>
+          <div>
+            <section class="result-card" style="margin-bottom:15px"><h3>Descriptive summary</h3><div id="descTable" class="result-card-body"></div></section>
+            <section class="result-card"><h3>ANOVA table</h3><div id="anovaTable" class="result-card-body"><div class="empty-table">Run a one-way ANOVA to display this table.</div></div></section>
+          </div>
+        </div>
+        <p class="course-note"><strong>Method note:</strong> Critical values and p-values are calculated numerically. The displayed working follows the formulas supplied for this course.</p>
+        <div class="app-footer">Statistics Learning Simulator · Mulungushi University SNAS · created for undergraduate learning</div>
+      </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const fmt = (x, digits=4) => Number.isFinite(x) ? Number(x).toFixed(digits) : '—';
+const fmtSmart = x => Number.isFinite(x) ? Number(x).toFixed(4).replace(/\.?(0+)$/, '') : '—';
+const testNames = {descriptive:'Descriptive statistics',oneSampleT:'One-sample t-test',twoSampleT:'Two-sample t-test',pairedT:'Paired t-test',ftest:'F-test',anova1:'One-way ANOVA',qtest:"Dixon's Q-test"};
+function parseNumbers(text){ return (text || '').trim().split(/[\s,;]+/).map(Number).filter(Number.isFinite); }
+function readGroups(){ return ['inputA','inputB','inputC'].map(id => parseNumbers($(id).value)).filter(g => g.length); }
+function sum(a){ return a.reduce((total,value)=>total+value,0); }
+function mean(a){ return sum(a)/a.length; }
+function variance(a){ const m=mean(a); return sum(a.map(x=>(x-m)**2))/(a.length-1); }
+function sd(a){ return Math.sqrt(variance(a)); }
+function squaredDeviationSum(a){ const m=mean(a); return sum(a.map(x=>(x-m)**2)); }
+function tCDF(t,df){ const x=df/(df+t*t); const ib=.5*betai(df/2,.5,x); return t>=0 ? 1-ib : ib; }
+function invTCDF(p,df){ let lo=-10,hi=10; for(let i=0;i<70;i++){ const mid=(lo+hi)/2; if(tCDF(mid,df)<p)lo=mid;else hi=mid; } return (lo+hi)/2; }
+function fCDF(x,dfn,dfd){ return betai(dfn/2,dfd/2,(dfn*x)/(dfn*x+dfd)); }
+function invFCDF(p,dfn,dfd){ let lo=1e-8,hi=1e8; for(let i=0;i<90;i++){ const mid=(lo+hi)/2; if(fCDF(mid,dfn,dfd)<p)lo=mid;else hi=mid; } return (lo+hi)/2; }
+function betacf(a,b,x){ const MAXIT=100,EPS=3e-16,FPMIN=1e-300; let qab=a+b,qap=a+1,qam=a-1,c=1,d=1-qab*x/qap; if(Math.abs(d)<FPMIN)d=FPMIN; d=1/d; let h=d; for(let m=1;m<=MAXIT;m++){let m2=2*m,aa=m*(b-m)*x/((qam+m2)*(a+m2)); d=1+aa*d;if(Math.abs(d)<FPMIN)d=FPMIN;d=1/d;c=1+aa/c;if(Math.abs(c)<FPMIN)c=FPMIN;h*=d*c;aa=-(a+m)*(qab+m)*x/((a+m2)*(qap+m2));d=1+aa*d;if(Math.abs(d)<FPMIN)d=FPMIN;d=1/d;c=1+aa/c;if(Math.abs(c)<FPMIN)c=FPMIN;h*=d*c;if(Math.abs(c*d-1)<EPS)break;}return h; }
+function betai(a,b,x){ if(x<0||x>1)return NaN;if(x===0||x===1)return x; const bt=Math.exp(lgamma(a+b)-lgamma(a)-lgamma(b)+a*Math.log(x)+b*Math.log(1-x)); return x<(a+1)/(a+b+2) ? bt*betacf(a,b,x)/a : 1-bt*betacf(b,a,1-x)/b; }
+function lgamma(z){ const cof=[76.18009172947146,-86.50532032941677,24.01409824083091,-1.231739572450155,.001208650973866179,-.000005395239384953];let x=z,y=z,tmp=x+5.5;tmp-=(x+.5)*Math.log(tmp);let ser=1.000000000190015;for(let j=0;j<6;j++){y+=1;ser+=cof[j]/y;}return-tmp+Math.log(2.5066282746310005*ser/x); }
+function confidence(g,alpha){ const n=g.length,m=mean(g),s=sd(g),df=n-1,tcrit=invTCDF(1-alpha/2,df),se=s/Math.sqrt(n); return {n,m,s,df,tcrit,se,lo:m-tcrit*se,hi:m+tcrit*se,ss:squaredDeviationSum(g),total:sum(g)}; }
+function pooledT(a,b,tail,alpha){ const n1=a.length,n2=b.length,m1=mean(a),m2=mean(b),s1=sd(a),s2=sd(b),df=n1+n2-2; const sp=Math.sqrt((((n1-1)*s1*s1)+((n2-1)*s2*s2))/df); const t=((m1-m2)/sp)*Math.sqrt((n1*n2)/(n1+n2)); const pTwo=2*(1-tCDF(Math.abs(t),df)),pLess=tCDF(t,df),pGreater=1-tCDF(t,df),p=tail==='two'?pTwo:tail==='less'?pLess:pGreater,tcrit=invTCDF(1-(tail==='two'?alpha/2:alpha),df); const reject=tail==='two'?Math.abs(t)>tcrit:tail==='less'?t<-tcrit:t>tcrit;return{n1,n2,m1,m2,s1,s2,sp,df,t,p,tcrit,reject}; }
+function oneSample(a,mu0,tail,alpha){ const n=a.length,m=mean(a),s=sd(a),df=n-1,se=s/Math.sqrt(n),t=(m-mu0)/se,pTwo=2*(1-tCDF(Math.abs(t),df)),pLess=tCDF(t,df),pGreater=1-tCDF(t,df),p=tail==='two'?pTwo:tail==='less'?pLess:pGreater,tcrit=invTCDF(1-(tail==='two'?alpha/2:alpha),df); const reject=tail==='two'?Math.abs(t)>tcrit:tail==='less'?t<-tcrit:t>tcrit;return{n,m,s,df,se,t,p,tcrit,reject,ss:squaredDeviationSum(a),total:sum(a)}; }
+function paired(a,b,tail,alpha){ if(a.length!==b.length)throw new Error('Paired t-test requires Group A and Group B to have the same number of values.'); const d=a.map((x,i)=>x-b[i]); return {...oneSample(d,0,tail,alpha),differences:d}; }
+function fTest(a,b,alpha){const s1=sd(a),s2=sd(b),v1=a.length-1,v2=b.length-1;let F,num,den,label,largerSD,smallerSD;if(s1*s1>=s2*s2){F=s1*s1/(s2*s2);num=v1;den=v2;label='Group A / Group B';largerSD=s1;smallerSD=s2;}else{F=s2*s2/(s1*s1);num=v2;den=v1;label='Group B / Group A';largerSD=s2;smallerSD=s1;}const pUpper=1-fCDF(F,num,den),pTwo=Math.min(1,2*pUpper),upper=invFCDF(1-alpha/2,num,den),lower=invFCDF(alpha/2,num,den);return{s1,s2,v1,v2,F,num,den,label,largerSD,smallerSD,pTwo,upper,lower,reject:F>upper};}
+function anova(groups){const k=groups.length,ns=groups.map(g=>g.length),N=sum(ns),means=groups.map(mean),grand=sum(groups.flat())/N;const SSB=sum(means.map((m,i)=>ns[i]*(m-grand)**2)),SSW=sum(groups.map(g=>sum(g.map(x=>(x-mean(g))**2)))),dfB=k-1,dfW=N-k,MSB=SSB/dfB,MSW=SSW/dfW,F=MSB/MSW,p=1-fCDF(F,dfB,dfW);return{k,ns,N,means,grand,SSB,SSW,dfB,dfW,MSB,MSW,F,p};}
+const Q_CRIT={3:{'.10':.941,'.05':.970,'.01':.994},4:{'.10':.765,'.05':.829,'.01':.926},5:{'.10':.642,'.05':.710,'.01':.821},6:{'.10':.560,'.05':.625,'.01':.740},7:{'.10':.507,'.05':.568,'.01':.680},8:{'.10':.468,'.05':.526,'.01':.634},9:{'.10':.437,'.05':.493,'.01':.598},10:{'.10':.412,'.05':.466,'.01':.568},11:{'.10':.392,'.05':.444,'.01':.542},12:{'.10':.376,'.05':.426,'.01':.522},13:{'.10':.361,'.05':.410,'.01':.503},14:{'.10':.349,'.05':.396,'.01':.488},15:{'.10':.338,'.05':.384,'.01':.475},16:{'.10':.329,'.05':.374,'.01':.463},17:{'.10':.320,'.05':.365,'.01':.452},18:{'.10':.313,'.05':.356,'.01':.442},19:{'.10':.306,'.05':.349,'.01':.434},20:{'.10':.300,'.05':.342,'.01':.426},21:{'.10':.295,'.05':.337,'.01':.419},22:{'.10':.290,'.05':.331,'.01':.412},23:{'.10':.285,'.05':.326,'.01':.406},24:{'.10':.281,'.05':.322,'.01':.401},25:{'.10':.277,'.05':.318,'.01':.396},26:{'.10':.273,'.05':.314,'.01':.391},27:{'.10':.270,'.05':.310,'.01':.387},28:{'.10':.267,'.05':.307,'.01':.383},29:{'.10':.264,'.05':.304,'.01':.379},30:{'.10':.261,'.05':.301,'.01':.376}};
+function dixon(a,alpha){if(a.length<3||a.length>30)throw new Error("Dixon's Q-test needs 3 to 30 values in Group A.");const x=[...a].sort((p,q)=>p-q),N=x.length,qmin=(x[1]-x[0])/(x[N-1]-x[0]),qmax=(x[N-1]-x[N-2])/(x[N-1]-x[0]),q=Math.max(qmin,qmax),isMax=qmax>qmin,crit=Q_CRIT[N][alpha.toFixed(2).replace(/^0/,'')];return{N,x,qmin,qmax,q,crit,isMax,suspect:isMax?x[N-1]:x[0],nearest:isMax?x[N-2]:x[1],range:x[N-1]-x[0],reject:q>crit};}
+function fraction(top,bottom){return `<span class="frac"><span>${top}</span><span>${bottom}</span></span>`;}
+function root(content){return `<span class="sqrt"><span>${content}</span></span>`;}
+function equation(content){return `<div class="calculation"><div class="math">${content}</div></div>`;}
+function step(title,explanation,content,result){return `<article class="worked-step"><p class="step-title">${title}</p>${explanation?`<p class="step-explanation">${explanation}</p>`:''}${equation(content)}${result?`<span class="result-line">${result}</span>`:''}</article>`;}
+function metric(label,value,note){return `<div class="metric"><div class="metric-label">${label}</div><div class="metric-value">${value}</div>${note?`<div class="metric-note">${note}</div>`:''}</div>`;}
+function decision(reject,acceptText,rejectText){return `<div class="decision ${reject?'reject':'accept'}">${reject?rejectText:acceptText}</div>`;}
+function descriptivesTable(groups,alpha){if(!groups.length)return '<div class="empty-table">No valid numerical data entered.</div>';const rows=groups.map((g,i)=>{const c=confidence(g,alpha);return `<tr><td>Group ${String.fromCharCode(65+i)}</td><td>${c.n}</td><td>${fmt(c.m)}</td><td>${fmt(c.s)}</td><td>${fmt(c.s/c.m*100)}%</td><td>${fmt(c.lo)} to ${fmt(c.hi)}</td></tr>`;}).join('');return `<div class="table-wrap"><table class="data-table"><thead><tr><th>Group</th><th>n</th><th>Mean</th><th>SD</th><th>RSD/CV</th><th>Confidence limits</th></tr></thead><tbody>${rows}</tbody></table></div>`;}
+function anovaTable(a){if(!a)return '<div class="empty-table">Run a one-way ANOVA to display this table.</div>';return `<div class="table-wrap"><table class="data-table"><thead><tr><th>Source</th><th>SS</th><th>df</th><th>MS</th><th>F</th><th>p</th></tr></thead><tbody><tr><td>Between groups</td><td>${fmt(a.SSB)}</td><td>${a.dfB}</td><td>${fmt(a.MSB)}</td><td>${fmt(a.F)}</td><td>${fmt(a.p)}</td></tr><tr><td>Within groups</td><td>${fmt(a.SSW)}</td><td>${a.dfW}</td><td>${fmt(a.MSW)}</td><td>—</td><td>—</td></tr><tr><td>Total</td><td>${fmt(a.SSB+a.SSW)}</td><td>${a.dfB+a.dfW}</td><td>—</td><td>—</td><td>—</td></tr></tbody></table></div>`;}
+function descriptiveSteps(groups,alpha){let html='';groups.forEach((g,i)=>{const c=confidence(g,alpha),label=`Group ${String.fromCharCode(65+i)}`,values=g.map(fmtSmart).join(' + '),ss=fmt(c.ss);html+=step(`${label}: mean`,`Add all ${c.n} values, then divide by the number of values.`,`<var>x̄</var> = ${fraction(`Σx<sub>i</sub>`,`n`)} = ${fraction(`${values}`,c.n)} = ${fmt(c.m)}`,`Mean = ${fmt(c.m)}`);html+=step(`${label}: standard deviation`,`Use the sample standard deviation because the denominator is n − 1.`,`<var>s</var> = ${root(fraction(`Σ(x<sub>i</sub> − x̄)<sup>2</sup>`,`n − 1`))} = ${root(fraction(ss,c.n-1))} = ${fmt(c.s)}`,`SD = ${fmt(c.s)}`);html+=step(`${label}: RSD/CV and confidence limits`,`Use t<sub>critical</sub> = ${fmt(c.tcrit)} for ${c.df} degrees of freedom at ${(1-alpha)*100}% confidence.`,`RSD / CV = ${fraction('s','x̄')} × 100 = ${fraction(fmt(c.s),fmt(c.m))} × 100 = ${fmt(c.s/c.m*100)}%<br>CL = x̄ ± ${fraction('ts','√n')} = ${fmt(c.m)} ± ${fraction(`${fmt(c.tcrit)} × ${fmt(c.s)}`,`√${c.n}`)} = ${fmt(c.lo)} to ${fmt(c.hi)}`,`Confidence limits: ${fmt(c.lo)} to ${fmt(c.hi)}`);});return html;}
+function tailLabel(tail){return tail==='two'?'two-tailed':tail==='less'?'one-tailed (less than)':'one-tailed (greater than)';}
+function calculate(){const groups=readGroups(),test=$('testSelect').value,alpha=parseFloat($('alphaSelect').value),tail=$('tailSelect').value,mu0=parseFloat($('mu0').value);let worked='',banner='',metrics='',anovaResult=null;try{if(!groups.length)throw new Error('Enter at least one numerical value in Group A.');$('descTable').innerHTML=descriptivesTable(groups,alpha);if(test==='descriptive'){const c=confidence(groups[0],alpha);banner=`<div class="result-banner"><div class="banner-top"><h3>Descriptive statistics complete</h3><span class="result-tag">${(1-alpha)*100}% confidence</span></div><p>The calculation below shows the mean, sample standard deviation, RSD/CV, and confidence limits for every entered group.</p></div>`;metrics=metric('Group A mean',fmt(c.m),'sample mean')+metric('Group A SD',fmt(c.s),'sample SD')+metric('Group A RSD/CV',`${fmt(c.s/c.m*100)}%`,'precision')+metric('Confidence limits',`${fmt(c.lo)}–${fmt(c.hi)}`,'mean interval');worked=descriptiveSteps(groups,alpha);}
+else if(test==='oneSampleT'){if(groups[0].length<2)throw new Error('One-sample t-test requires at least two values in Group A.');if(!Number.isFinite(mu0))throw new Error('Enter the hypothesised mean, μ₀.');const r=oneSample(groups[0],mu0,tail,alpha);banner=`<div class="result-banner"><div class="banner-top"><h3>One-sample t-test complete</h3><span class="result-tag">${tailLabel(tail)}, α = ${alpha}</span></div><p>H<sub>0</sub>: μ = ${fmtSmart(mu0)}. Compare the calculated t-value with the critical t-value.</p></div>`;metrics=metric('Sample mean',fmt(r.m),`n = ${r.n}`)+metric('t calculated',fmt(r.t),`df = ${r.df}`)+metric('t critical',fmt(r.tcrit),tailLabel(tail))+metric('p-value',fmt(r.p),r.p<alpha?'below α':'above α');worked=step('Calculate the sample mean and standard deviation','These describe the observed data before the hypothesis test.',`x̄ = ${fraction(`Σx<sub>i</sub>`,r.n)} = ${fraction(fmt(r.total),r.n)} = ${fmt(r.m)}; &nbsp; s = ${root(fraction(fmt(r.ss),r.n-1))} = ${fmt(r.s)}`,`x̄ = ${fmt(r.m)}, s = ${fmt(r.s)}`)+step('Calculate the standard error','The standard error measures the uncertainty of the sample mean.',`SE = ${fraction('s','√n')} = ${fraction(fmt(r.s),`√${r.n}`)} = ${fmt(r.se)}`,`SE = ${fmt(r.se)}`)+step('Calculate t','Subtract the hypothesised mean, then divide by the standard error.',`t<sub>calc</sub> = ${fraction('x̄ − μ<sub>0</sub>','s / √n')} = ${fraction(`${fmt(r.m)} − ${fmt(mu0)}`,fmt(r.se))} = ${fmt(r.t)}`,`t<sub>calc</sub> = ${fmt(r.t)}`)+step('Decision rule',`For df = ${r.df}, ${tailLabel(tail)}, and α = ${alpha}, t<sub>critical</sub> = ${fmt(r.tcrit)}.`,`|t<sub>calc</sub>| = ${fmt(Math.abs(r.t))} ${r.reject?'&gt;':'≤'} t<sub>critical</sub> = ${fmt(r.tcrit)}`,`p = ${fmt(r.p)}`)+decision(r.reject,'Decision: fail to reject H₀. The observed mean does not differ significantly from μ₀.','Decision: reject H₀. The observed mean differs significantly from μ₀.');}
+else if(test==='twoSampleT'){if(groups.length<2||groups[0].length<2||groups[1].length<2)throw new Error('Two-sample t-test requires at least two values in both Group A and Group B.');const r=pooledT(groups[0],groups[1],tail,alpha);banner=`<div class="result-banner"><div class="banner-top"><h3>Two-sample pooled t-test complete</h3><span class="result-tag">${tailLabel(tail)}, α = ${alpha}</span></div><p>H<sub>0</sub>: μ<sub>A</sub> = μ<sub>B</sub>. The pooled standard-deviation formula from the supplied table is used.</p></div>`;metrics=metric('Mean A',fmt(r.m1),`n₁ = ${r.n1}`)+metric('Mean B',fmt(r.m2),`n₂ = ${r.n2}`)+metric('t calculated',fmt(r.t),`df = ${r.df}`)+metric('p-value',fmt(r.p),r.p<alpha?'below α':'above α');worked=step('Calculate group means and standard deviations','Use the descriptive values for both independent groups.',`x̄<sub>1</sub> = ${fmt(r.m1)}, s<sub>1</sub> = ${fmt(r.s1)}; &nbsp; x̄<sub>2</sub> = ${fmt(r.m2)}, s<sub>2</sub> = ${fmt(r.s2)}`,`n<sub>1</sub> = ${r.n1}, n<sub>2</sub> = ${r.n2}`)+step('Calculate the pooled standard deviation','This combines the two sample variances according to their degrees of freedom.',`s<sub>pooled</sub> = ${root(fraction(`s<sub>1</sub><sup>2</sup>(n<sub>1</sub>−1)+s<sub>2</sub><sup>2</sup>(n<sub>2</sub>−1)`,`n<sub>1</sub>+n<sub>2</sub>−2`))} = ${root(fraction(`${fmt(r.s1)}<sup>2</sup>(${r.n1-1}) + ${fmt(r.s2)}<sup>2</sup>(${r.n2-1})`,r.df))} = ${fmt(r.sp)}`,`s<sub>pooled</sub> = ${fmt(r.sp)}`)+step('Calculate t','Use the two-sample t equation supplied in the formula table.',`t<sub>calc</sub> = ${fraction('|x̄<sub>1</sub> − x̄<sub>2</sub>|','s<sub>pooled</sub>')} ${root(fraction('n<sub>1</sub>n<sub>2</sub>','n<sub>1</sub>+n<sub>2</sub>'))} = ${fraction(`|${fmt(r.m1)} − ${fmt(r.m2)}|`,fmt(r.sp))} ${root(fraction(`${r.n1} × ${r.n2}`,r.n1+r.n2))} = ${fmt(r.t)}`,`t<sub>calc</sub> = ${fmt(r.t)}`)+step('Decision rule',`For df = ${r.df}, ${tailLabel(tail)}, and α = ${alpha}, t<sub>critical</sub> = ${fmt(r.tcrit)}.`,`|t<sub>calc</sub>| = ${fmt(Math.abs(r.t))} ${r.reject?'&gt;':'≤'} t<sub>critical</sub> = ${fmt(r.tcrit)}`,`p = ${fmt(r.p)}`)+decision(r.reject,'Decision: fail to reject H₀. There is no statistically significant difference between the group means.','Decision: reject H₀. There is a statistically significant difference between the group means.');}
+else if(test==='pairedT'){if(groups.length<2)throw new Error('Paired t-test requires Group A and Group B.');const r=paired(groups[0],groups[1],tail,alpha);banner=`<div class="result-banner"><div class="banner-top"><h3>Paired t-test complete</h3><span class="result-tag">${tailLabel(tail)}, α = ${alpha}</span></div><p>H<sub>0</sub>: the mean paired difference is zero. Values are compared pair by pair as A − B.</p></div>`;metrics=metric('Mean difference',fmt(r.m),`n pairs = ${r.n}`)+metric('SD of differences',fmt(r.s),'sample SD')+metric('t calculated',fmt(r.t),`df = ${r.df}`)+metric('p-value',fmt(r.p),r.p<alpha?'below α':'above α');worked=step('Calculate paired differences','Subtract each value in Group B from its corresponding value in Group A.',`d<sub>i</sub> = A<sub>i</sub> − B<sub>i</sub>; &nbsp; d = [${r.differences.map(fmtSmart).join(', ')}]`,`${r.n} paired differences`)+step('Calculate the mean and standard deviation of differences','The paired t-test is a one-sample t-test applied to the differences.',`d̄ = ${fraction('Σd<sub>i</sub>',r.n)} = ${fmt(r.m)}; &nbsp; s<sub>d</sub> = ${root(fraction(`Σ(d<sub>i</sub> − d̄)<sup>2</sup>`,r.n-1))} = ${fmt(r.s)}`,`d̄ = ${fmt(r.m)}`)+step('Calculate t','Divide the mean difference by its standard error.',`t<sub>calc</sub> = ${fraction('d̄','s<sub>d</sub> / √n')} = ${fraction(fmt(r.m),fmt(r.se))} = ${fmt(r.t)}`,`t<sub>calc</sub> = ${fmt(r.t)}`)+step('Decision rule',`For df = ${r.df}, ${tailLabel(tail)}, t<sub>critical</sub> = ${fmt(r.tcrit)}.`,`|t<sub>calc</sub>| = ${fmt(Math.abs(r.t))} ${r.reject?'&gt;':'≤'} ${fmt(r.tcrit)}`,`p = ${fmt(r.p)}`)+decision(r.reject,'Decision: fail to reject H₀. The paired measurements do not show a significant mean difference.','Decision: reject H₀. The paired measurements show a significant mean difference.');}
+else if(test==='ftest'){if(groups.length<2||groups[0].length<2||groups[1].length<2)throw new Error('F-test requires at least two values in Group A and Group B.');const r=fTest(groups[0],groups[1],alpha);banner=`<div class="result-banner"><div class="banner-top"><h3>F-test for variance complete</h3><span class="result-tag">Two-tailed, α = ${alpha}</span></div><p>H<sub>0</sub>: the two population variances are equal. The larger variance is placed in the numerator.</p></div>`;metrics=metric('SD A',fmt(r.s1),`df = ${r.v1}`)+metric('SD B',fmt(r.s2),`df = ${r.v2}`)+metric('F calculated',fmt(r.F),r.label)+metric('p-value',fmt(r.pTwo),r.pTwo<alpha?'below α':'above α');worked=step('Calculate the group standard deviations','The standard deviation is calculated using the sample denominator, n − 1.',`s<sub>A</sub> = ${fmt(r.s1)}; &nbsp; s<sub>B</sub> = ${fmt(r.s2)}`,`Larger variance: ${r.label.split(' / ')[0]}`)+step('Calculate F','Put the larger sample variance in the numerator so F is at least 1.',`F<sub>calc</sub> = ${fraction('s<sub>larger</sub><sup>2</sup>','s<sub>smaller</sub><sup>2</sup>')} = ${fraction(`${fmt(r.largerSD)}<sup>2</sup>`,`${fmt(r.smallerSD)}<sup>2</sup>`)} = ${fmt(r.F)}`,`F<sub>calc</sub> = ${fmt(r.F)}`)+step('Decision rule',`Numerator df = ${r.num}; denominator df = ${r.den}. The upper critical F at α/2 is ${fmt(r.upper)}.`,`F<sub>calc</sub> = ${fmt(r.F)} ${r.reject?'&gt;':'≤'} F<sub>critical</sub> = ${fmt(r.upper)}`,`two-tailed p ≈ ${fmt(r.pTwo)}`)+decision(r.reject,'Decision: fail to reject H₀. The two variances are not significantly different.','Decision: reject H₀. The two variances are significantly different.');}
+else if(test==='anova1'){if(groups.length<2||groups.some(g=>g.length<2))throw new Error('One-way ANOVA requires at least two groups, each with at least two values.');const r=anova(groups);anovaResult=r;banner=`<div class="result-banner"><div class="banner-top"><h3>One-way ANOVA complete</h3><span class="result-tag">${r.k} groups, α = ${alpha}</span></div><p>H<sub>0</sub>: all group means are equal. ANOVA compares variation between groups with variation within groups.</p></div>`;metrics=metric('Grand mean',fmt(r.grand),`N = ${r.N}`)+metric('MS between',fmt(r.MSB),`df = ${r.dfB}`)+metric('MS within',fmt(r.MSW),`df = ${r.dfW}`)+metric('F / p-value',`${fmt(r.F)} / ${fmt(r.p)}`,r.p<alpha?'below α':'above α');const groupLines=r.means.map((m,i)=>`x̄<sub>${String.fromCharCode(65+i)}</sub> = ${fmt(m)} (n = ${r.ns[i]})`).join('; &nbsp; ');worked=step('Calculate each group mean and the grand mean','The grand mean uses every observation across all groups.',`${groupLines}<br>x̄<sub>grand</sub> = ${fmt(r.grand)}`,`N = ${r.N}`)+step('Calculate the sums of squares','SS<sub>between</sub> measures separation of group means; SS<sub>within</sub> measures spread inside the groups.',`SS<sub>between</sub> = Σn<sub>i</sub>(x̄<sub>i</sub> − x̄<sub>grand</sub>)<sup>2</sup> = ${fmt(r.SSB)}<br>SS<sub>within</sub> = ΣΣ(x<sub>ij</sub> − x̄<sub>i</sub>)<sup>2</sup> = ${fmt(r.SSW)}`,`SS<sub>total</sub> = ${fmt(r.SSB+r.SSW)}`)+step('Calculate mean squares and F','Divide each sum of squares by its degrees of freedom.',`MS<sub>between</sub> = ${fraction(`SS<sub>between</sub>`,r.dfB)} = ${fraction(fmt(r.SSB),r.dfB)} = ${fmt(r.MSB)}<br>MS<sub>within</sub> = ${fraction(`SS<sub>within</sub>`,r.dfW)} = ${fraction(fmt(r.SSW),r.dfW)} = ${fmt(r.MSW)}<br>F = ${fraction('MS<sub>between</sub>','MS<sub>within</sub>')} = ${fraction(fmt(r.MSB),fmt(r.MSW))} = ${fmt(r.F)}`,`F(${r.dfB}, ${r.dfW}) = ${fmt(r.F)}`)+decision(r.p<alpha,'Decision: fail to reject H₀. The group means are not significantly different at the selected α level.','Decision: reject H₀. At least one group mean differs significantly. A post-hoc test is needed to identify which means differ.');}
+else if(test==='qtest'){const r=dixon(groups[0],alpha);banner=`<div class="result-banner"><div class="banner-top"><h3>Dixon's Q-test complete</h3><span class="result-tag">N = ${r.N}, α = ${alpha}</span></div><p>The end value with the larger Q is assessed as the possible outlier.</p></div>`;metrics=metric('Suspect value',fmtSmart(r.suspect),r.isMax?'largest value':'smallest value')+metric('Nearest value',fmtSmart(r.nearest),'next closest')+metric('Q experimental',fmt(r.q),`Qcrit = ${r.crit}`)+metric('Data range',fmt(r.range),`${fmtSmart(r.x[0])} to ${fmtSmart(r.x[r.N-1])}`);worked=step('Order the data','Dixon\'s Q-test assesses an extreme value; first sort the observations from smallest to largest.',`x = [${r.x.map(fmtSmart).join(', ')}]`,`Suspect value = ${fmtSmart(r.suspect)}`)+step('Calculate Q','Apply the formula from the supplied table: gap divided by the full range.',`Q<sub>exp</sub> = ${fraction('|suspect value − nearest value|','largest value − smallest value')} = ${fraction(`|${fmtSmart(r.suspect)} − ${fmtSmart(r.nearest)}|`,`${fmtSmart(r.x[r.N-1])} − ${fmtSmart(r.x[0])}`)} = ${fmt(r.q)}`,`Q<sub>exp</sub> = ${fmt(r.q)}`)+step('Compare Q values',`For N = ${r.N} and α = ${alpha}, the tabulated critical value is Q<sub>crit</sub> = ${r.crit}.`,`Q<sub>exp</sub> = ${fmt(r.q)} ${r.reject?'&gt;':'≤'} Q<sub>crit</sub> = ${r.crit}`,`Q<sub>min</sub> = ${fmt(r.qmin)}; Q<sub>max</sub> = ${fmt(r.qmax)}`)+decision(r.reject,'Decision: do not reject the suspect value. It is retained at the selected confidence level.','Decision: reject the suspect value as an outlier at the selected confidence level.');}
+$('resultBanner').innerHTML=banner;$('summaryGrid').innerHTML=metrics;$('workedSolution').innerHTML=worked;$('anovaTable').innerHTML=anovaTable(anovaResult);$('welcome').style.display='none';$('solutionOutput').classList.add('visible');$('solutionOutput').scrollIntoView({behavior:'smooth',block:'start'});}
+catch(error){$('welcome').style.display='none';$('solutionOutput').classList.add('visible');$('resultBanner').innerHTML=`<div class="result-banner" style="background:linear-gradient(105deg,#855000,#bc791c)"><div class="banner-top"><h3>Data check required</h3><span class="result-tag">No calculation made</span></div><p>${error.message}</p></div>`;$('summaryGrid').innerHTML='';$('workedSolution').innerHTML=step('Correct the input','Check the requirement shown above, then calculate again.','Enter numerical values separated by spaces, commas, or line breaks.');$('anovaTable').innerHTML=anovaTable(null);$('descTable').innerHTML=descriptivesTable(groups,alpha);}}
+function updateGuide(){const value=$('testSelect').value;const guides={descriptive:'Calculate mean, sample SD, RSD/CV, and confidence limits for each group.',oneSampleT:'Requires Group A and a hypothesised mean μ₀.',twoSampleT:'Requires Group A and Group B. Uses the supplied pooled standard-deviation formula.',pairedT:'Requires equal numbers of paired values in Group A and Group B.',ftest:'Requires Group A and Group B. Compares their variances.',anova1:'Requires at least two groups; Group C is optional.',qtest:"Requires 3 to 30 values in Group A. Tests one extreme value at a time."};$('analysisGuide').innerHTML=`<strong>Method requirement:</strong> ${guides[value]}`;$('mu0Wrap').style.display=value==='oneSampleT'?'grid':'none';}
+function splitBlock(){const block=prompt('Paste a single data block. Use one blank line between each group.');if(!block)return;const groups=block.trim().split(/\n\s*\n+/).slice(0,3);['inputA','inputB','inputC'].forEach((id,i)=>{$(id).value=groups[i]||'';});}
+function clearAll(){['inputA','inputB','inputC','mu0'].forEach(id=>$(id).value='');$('welcome').style.display='grid';$('solutionOutput').classList.remove('visible');$('descTable').innerHTML='';$('anovaTable').innerHTML=anovaTable(null);}
+function loadDemo(){$('inputA').value='12 13 15 12 14 16 15';$('inputB').value='11 10 14 12 13 12 11';$('inputC').value='9 11 13 12 8 10 12';$('mu0').value='13';}
+function plainResult(){return $('solutionOutput').innerText.replace(/\n{3,}/g,'\n\n').trim();}
+async function copyResult(){const text=plainResult();if(!text){alert('Calculate a solution first.');return;}try{await navigator.clipboard.writeText(text);alert('Result text copied.');}catch{alert('Copy is unavailable in this browser. Select the result text manually.');}}
+function downloadResult(){const text=plainResult();if(!text){alert('Calculate a solution first.');return;}const blob=new Blob([text],{type:'text/plain'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='statistics_simulator_result.txt';a.click();setTimeout(()=>URL.revokeObjectURL(url),500);}
+$('runBtn').addEventListener('click',calculate);$('testSelect').addEventListener('change',updateGuide);$('splitBtn').addEventListener('click',splitBlock);$('clearBtn').addEventListener('click',clearAll);$('demoBtn').addEventListener('click',loadDemo);$('copyBtn').addEventListener('click',copyResult);$('downloadBtn').addEventListener('click',downloadResult);$('presentationBtn').addEventListener('click',()=>{const enabled=document.body.classList.toggle('presentation');$('presentationBtn').setAttribute('aria-pressed',String(enabled));$('presentationBtn').textContent=enabled?'Standard display':'Presentation mode';});
+updateGuide();
+</script>
+</body>
+</html>
